@@ -91,7 +91,11 @@
       if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program));
       gl.useProgram(program);
       this.program = program;
-      this.uniform = (name) => gl.getUniformLocation(program, name);
+      const uniforms = new Map();
+      this.uniform = (name) => {
+        if (!uniforms.has(name)) uniforms.set(name, gl.getUniformLocation(program, name));
+        return uniforms.get(name);
+      };
       this.vao = gl.createVertexArray();
       gl.bindVertexArray(this.vao);
       const corners = gl.createBuffer();
@@ -114,21 +118,42 @@
       gl.uniform1i(this.uniform("uCovB"), 2);
       gl.uniform1i(this.uniform("uColor"), 3);
       this.count = 0;
-      this.active = true;  // the page clears it while the viewer is hidden
-      // Resolution scale: lowered while frames take too long, since the cost is the pixels the splats cover.
+      this.active = false;
+      this.pendingFrame = null;
       this.quality = 1;
       this.slow = 0;
-      this.autoRotate = true;
-      this.idleSince = 0;
       this.dirty = true;
       this.controls();
-      const frame = (time) => { this.tick(time); requestAnimationFrame(frame); };
-      requestAnimationFrame(frame);
+      this.resizeObserver = new ResizeObserver(() => this.invalidate());
+      this.resizeObserver.observe(canvas);
+    }
+
+    // Input bursts share one frame. A stationary or hidden stage schedules no callbacks.
+    invalidate() {
+      this.dirty = true;
+      if (!this.active || this.pendingFrame !== null) return;
+      this.pendingFrame = requestAnimationFrame((time) => {
+        this.pendingFrame = null;
+        this.tick(time);
+      });
+    }
+
+    setActive(active) {
+      if (this.active === active) return;
+      this.active = active;
+      if (active) this.invalidate();
+      else if (this.pendingFrame !== null) {
+        cancelAnimationFrame(this.pendingFrame);
+        this.pendingFrame = null;
+      }
     }
 
     /* Load an avatar: `buffer` holds count x 40 bytes; `camera` gives eye, target, up and fovy.
        `keepView` keeps the current turn and zoom, for stepping through one clip's moments. */
     load(buffer, camera, keepView = false) {
+      if (!buffer.byteLength || buffer.byteLength % STRIDE) throw new Error("Invalid Gaussian file length");
+      if (![camera.eye, camera.target, camera.up].every((v) => v?.length === 3 && v.every(Number.isFinite)) ||
+          !Number.isFinite(camera.fovy) || camera.fovy <= 0 || camera.fovy >= Math.PI) throw new Error("Invalid avatar camera");
       const kept = keepView && this.count ? { azimuth: this.azimuth, elevation: this.elevation, distance: this.distance } : null;
       const gl = this.gl;
       const n = buffer.byteLength / STRIDE;
@@ -153,6 +178,7 @@
         texture(gl, 3, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, color, rows),
       ];
       this.rows = rows;
+      this.colorUpload = color;
       this.count = n;
       this.order = new Uint32Array(n);
       this.depths = new Float32Array(n);
@@ -166,19 +192,18 @@
 
     goHome() {
       Object.assign(this, this.home);
-      this.idleSince = performance.now();
-      this.dirty = true;
+      this.invalidate();
     }
 
     /* Replace the displayed colours (count x 4 bytes, RGBA). */
     setColors(rgba) {
+      if (rgba.length !== this.count * 4) throw new Error("Selection does not match the loaded avatar");
       const gl = this.gl;
-      const padded = new Uint8Array(WIDTH * this.rows * 4);
-      padded.set(rgba);
+      this.colorUpload.set(rgba);
       gl.activeTexture(gl.TEXTURE3);
       gl.bindTexture(gl.TEXTURE_2D, this.textures[3]);
-      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, WIDTH, this.rows, gl.RGBA, gl.UNSIGNED_BYTE, padded);
-      this.dirty = true;
+      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, WIDTH, this.rows, gl.RGBA, gl.UNSIGNED_BYTE, this.colorUpload);
+      this.invalidate();
     }
 
     reset() {
@@ -194,7 +219,10 @@
       this.elevation = Math.atan2(dot(offset, this.up), Math.hypot(...flat));
       this.distance = Math.hypot(...offset);
       this.home = { azimuth: this.azimuth, elevation: this.elevation, distance: this.distance };
-      this.dirty = true;
+      this.quality = 1;
+      this.slow = 0;
+      this.lastTick = null;
+      this.invalidate();
     }
 
     eye() {
@@ -243,20 +271,19 @@
 
     tick(time) {
       if (!this.count || !this.active) return;
-      // Consecutive rendered frames more than 45 ms apart mean the GPU cannot keep up: drop resolution.
-      if (this.renderedLast && time - this.lastTick > 45 && this.quality > 0.5 && ++this.slow > 6) {
-        this.quality = Math.max(0.5, this.quality * 0.8);
+      // Adapt only during a continuous drag; idle time must never count as a slow frame.
+      const elapsed = time - this.lastTick;
+      if (this.dragging && this.lastTick !== null && elapsed > 40 && elapsed < 1000 && ++this.slow >= 3) {
+        this.quality = Math.max(0.45, this.quality * 0.8);
         this.slow = 0;
       }
       this.lastTick = time;
-      this.renderedLast = false;
-      const canvas = this.canvas, ratio = Math.min(window.devicePixelRatio || 1, 1.5) * this.quality;
+      const canvas = this.canvas;
+      const pixels = canvas.clientWidth * canvas.clientHeight;
+      if (!pixels) return;
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.25, Math.sqrt(700000 / pixels)) * this.quality;
       const w = Math.round(canvas.clientWidth * ratio), h = Math.round(canvas.clientHeight * ratio);
       if (w && h && (canvas.width !== w || canvas.height !== h)) { canvas.width = w; canvas.height = h; this.dirty = true; }
-      if (this.autoRotate && !this.dragging && time - this.idleSince > 2500) {
-        this.azimuth += 0.0045;
-        this.dirty = true;
-      }
       if (!this.dirty) return;
       this.dirty = false;
       const gl = this.gl, { view, proj, fx, fy } = this.matrices();
@@ -270,17 +297,22 @@
       gl.uniform2f(this.uniform("uViewport"), canvas.width, canvas.height);
       gl.bindVertexArray(this.vao);
       gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, this.count);
-      this.renderedLast = true;
     }
 
     controls() {
       const canvas = this.canvas, pointers = new Map();
       let pinch = 0;
-      const touch = () => { this.idleSince = performance.now(); this.dirty = true; };
+      const touch = () => {
+        canvas.dispatchEvent(new Event("viewerinteraction"));
+        this.invalidate();
+      };
       canvas.addEventListener("pointerdown", (e) => {
         canvas.setPointerCapture(e.pointerId);
         pointers.set(e.pointerId, [e.clientX, e.clientY]);
         this.dragging = true;
+        this.quality = 0.7;
+        this.lastTick = null;
+        this.slow = 0;
         touch();
       });
       canvas.addEventListener("pointermove", (e) => {
@@ -302,11 +334,19 @@
         pointers.delete(e.pointerId);
         pinch = 0;
         this.dragging = pointers.size > 0;
+        if (!this.dragging) this.quality = 1;
         touch();
       };
       canvas.addEventListener("pointerup", release);
       canvas.addEventListener("pointercancel", release);
-      canvas.addEventListener("wheel", (e) => { e.preventDefault(); this.zoom(Math.exp(e.deltaY * 0.001)); touch(); }, { passive: false });
+      canvas.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        this.quality = 0.7;
+        this.zoom(Math.exp(e.deltaY * 0.001));
+        touch();
+        clearTimeout(this.zoomTimer);
+        this.zoomTimer = setTimeout(() => { this.quality = 1; this.invalidate(); }, 140);
+      }, { passive: false });
       canvas.addEventListener("dblclick", () => this.goHome());
       // Keyboard: arrows turn, + and - zoom, Home resets.
       canvas.addEventListener("keydown", (e) => {
@@ -325,7 +365,7 @@
 
     zoom(factor) {
       this.distance = Math.max(this.home.distance * 0.35, Math.min(this.home.distance * 2.5, this.distance * factor));
-      this.dirty = true;
+      this.invalidate();
     }
   }
 
