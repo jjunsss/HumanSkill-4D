@@ -13,6 +13,7 @@
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans:400,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@1,500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="static/page.css">
+  <link rel="stylesheet" href="static/explorer-tools.css">
 </head>
 <body>
 
@@ -55,6 +56,7 @@
         <div class="viewer-head">
           <span class="eyebrow" id="viewer-kind">Drag to explore in 3D</span>
           <h2 id="viewer-title">ZJU-MoCap 377</h2>
+          <button type="button" class="small" id="viewer-expand" aria-haspopup="dialog">Expand</button>
         </div>
         <div class="viewer-viewport" id="viewer-viewport">
           <canvas id="viewer-canvas" tabindex="0" aria-label="3D avatar. Drag or use arrow keys to turn; scroll, pinch or use plus and minus to zoom; Home resets the view."></canvas>
@@ -65,7 +67,16 @@
           <div>
             <button type="button" class="small" id="viewer-original" aria-pressed="false" disabled>Show original</button>
             <button type="button" class="small" id="viewer-reset" disabled>Reset view</button>
+            <button type="button" class="small" id="viewer-share" disabled>Share link</button>
           </div>
+        </div>
+        <div class="share-panel" id="viewer-share-panel" hidden>
+          <label for="viewer-share-url">Link to this avatar and query</label>
+          <div>
+            <input id="viewer-share-url" type="url" readonly spellcheck="false">
+            <button type="button" class="small" id="viewer-share-close">Close</button>
+          </div>
+          <p id="viewer-share-status" role="status"></p>
         </div>
       </div>
       <div class="viewer-side">
@@ -80,6 +91,12 @@
       <div class="subjects" id="viewer-subjects" role="group" aria-labelledby="subject-label"></div>
     </div>
   </div>
+  <dialog class="viewer-expanded" id="viewer-expanded" aria-label="Expanded 3D explorer">
+    <div class="expanded-heading">
+      <p>Explore in 3D</p>
+      <form method="dialog"><button type="submit" class="small" autofocus>Close expanded view</button></form>
+    </div>
+  </dialog>
   <p class="note">This shows saved HumanSkill-4D answers on nine ZJU-MoCap avatars.</p>
 </section>
 

@@ -231,31 +231,36 @@
       el("dt", {}, el("span", { class: "swatch" }), "Selected"), el("dd", { text: prompt.categories.join(", ") }))] :
       [el("p", { text: "This query is not available for this avatar. Choose another example." })]));
     $("#viewer-original").disabled = !prompt;
+    $("#viewer-share").disabled = !prompt;
   }
 
   function setOriginal(on) {
+    $("#viewer-share-panel").hidden = true;
     ex.original = on;
     $("#viewer-original").setAttribute("aria-pressed", String(on));
     $("#viewer-original").textContent = on ? "Show the answer" : "Show original";
     if (explorer.viewer) explorer.show(on ? null : ex.prompt);
   }
 
-  async function showAvatar(index) {
-    const item = D.viewer3d[index], keep = ex.promptId;
+  async function showAvatar(index, selection = null) {
+    const item = D.viewer3d[index], keep = selection ? selection.promptId : ex.promptId;
     pauseVideos();
+    explorer.wanted = true;
     ex.index = index;
+    ex.promptId = keep;
+    $("#viewer-share-panel").hidden = true;
     $("#viewer-title").textContent = item.title;
     subjectButtons.forEach((button, i) => button.setAttribute("aria-pressed", String(i === index)));
     $("#viewer-status").hidden = false;
     $("#viewer-status").textContent = `Loading ${item.title}…`;
     $("#viewer").setAttribute("aria-busy", "true");
-    for (const button of [...promptButtons, $("#viewer-original"), $("#viewer-reset")]) button.disabled = true;
+    for (const button of [...promptButtons, $("#viewer-original"), $("#viewer-reset"), $("#viewer-share")]) button.disabled = true;
     try {
       if (!(await explorer.load(item))) return;
     } catch (error) {
       $("#viewer").setAttribute("aria-busy", "false");
       const retry = el("button", { type: "button", class: "small", text: "Try again" });
-      retry.addEventListener("click", () => showAvatar(index));
+      retry.addEventListener("click", () => showAvatar(index, selection));
       $("#viewer-status").replaceChildren(`Could not load ${item.title}. ${error.message}`, retry);
       return;
     }
@@ -264,11 +269,87 @@
     for (const id of ["#viewer-original", "#viewer-reset"]) $(id).disabled = false;
     listPrompts(item, keep);
     choose(item.prompts.find((p) => p.id === keep) || null, keep);
+    if (selection?.original && ex.prompt) setOriginal(true);
   }
 
   $("#viewer-original").addEventListener("click", () => setOriginal(!ex.original));
   $("#viewer-reset").addEventListener("click", () => explorer.viewer && explorer.viewer.goHome());
-  showAvatar(ex.index);
+
+  /* Sharing uses a fragment, so a project hosted under any GitHub Pages path needs no routing. */
+  const sharePanel = $("#viewer-share-panel"), shareURL = $("#viewer-share-url");
+  $("#viewer-share").addEventListener("click", async () => {
+    const url = new URL(location.href);
+    const params = new URLSearchParams({ avatar: D.viewer3d[ex.index].id, query: ex.promptId });
+    if (ex.original) params.set("original", "1");
+    url.hash = `where?${params}`;
+    shareURL.value = url.href;
+    sharePanel.hidden = false;
+    const status = $("#viewer-share-status");
+    status.textContent = "Copy this link to reopen this avatar and query.";
+    try {
+      await navigator.clipboard.writeText(url.href);
+      if (shareURL.value === url.href) status.textContent = "Link copied. Ready to share.";
+    } catch {
+      // HTTP previews and denied clipboard access still expose a selectable link.
+      if (!sharePanel.hidden && shareURL.value === url.href) {
+        shareURL.focus({ preventScroll: true });
+        shareURL.select();
+      }
+    }
+  });
+  shareURL.addEventListener("click", () => shareURL.select());
+  $("#viewer-share-close").addEventListener("click", () => {
+    sharePanel.hidden = true;
+    $("#viewer-share").focus({ preventScroll: true });
+  });
+
+  function openSharedSelection() {
+    if (!location.hash.startsWith("#where?")) return false;
+    const params = new URLSearchParams(location.hash.slice(7));
+    const index = D.viewer3d.findIndex((item) => item.id === params.get("avatar"));
+    if (index < 0) {
+      explorer.cancel();
+      explorer.item = null;
+      ex.index = -1;
+      ex.prompt = null;
+      ex.promptId = "sunscreen";
+      setOriginal(false);
+      sharePanel.hidden = true;
+      $("#viewer").setAttribute("aria-busy", "false");
+      $("#viewer-title").textContent = "Choose an avatar";
+      $("#viewer-status").hidden = false;
+      $("#viewer-status").textContent = "This shared avatar is not available. Choose an avatar below to explore.";
+      $("#viewer-prompts").replaceChildren();
+      promptButtons.length = 0;
+      $("#viewer-answer").replaceChildren();
+      for (const id of ["#viewer-original", "#viewer-reset", "#viewer-share"]) $(id).disabled = true;
+      subjectButtons.forEach((button) => button.setAttribute("aria-pressed", "false"));
+    } else {
+      showAvatar(index, { promptId: params.get("query"), original: params.get("original") === "1" });
+    }
+    if (!$("#viewer-expanded").open) $("#where").scrollIntoView({ behavior: "instant", block: "start" });
+    return true;
+  }
+  window.addEventListener("hashchange", openSharedSelection);
+  if (!openSharedSelection()) showAvatar(ex.index);
+
+  /* Move the existing canvas into a native modal: one renderer, with its view and selection intact. */
+  const expanded = $("#viewer-expanded"), viewerElement = $("#viewer"), expandButton = $("#viewer-expand");
+  let returnScroll = null;
+  expandButton.hidden = typeof expanded.showModal !== "function";
+  expandButton.addEventListener("click", () => {
+    pauseVideos();
+    returnScroll = { left: window.scrollX, top: window.scrollY, behavior: "instant" };
+    document.body.classList.add("viewer-expanded-open");
+    expanded.append(viewerElement);
+    expanded.showModal();
+  });
+  expanded.addEventListener("close", () => {
+    expanded.before(viewerElement);
+    document.body.classList.remove("viewer-expanded-open");
+    expandButton.focus({ preventScroll: true });
+    window.scrollTo(returnScroll);
+  });
 
   /* ------------------------------------------------------------ 4D explorer */
   const clipVideo = $("#clip");

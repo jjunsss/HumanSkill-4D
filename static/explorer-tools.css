@@ -1,0 +1,45 @@
+/* Explorer tools follow the page palette. No extra canvas or animation loop. */
+
+#viewer-expand { flex-shrink: 0; padding: 5px 10px; font-size: 12px; }
+
+.viewer-toolbar > div { flex-wrap: wrap; }
+
+.share-panel { padding: 12px 14px; border-top: 1px solid var(--line); background: var(--page-bg, #fff); font-size: 12px; }
+.share-panel > div { display: flex; gap: 8px; margin-top: 6px; }
+.share-panel input { min-width: 0; width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel-2, #fff); font: inherit; color: var(--strong); }
+.share-panel input:focus-visible { outline: 2px solid var(--select-text, var(--select)); outline-offset: 2px; }
+.share-panel .small { flex-shrink: 0; font-size: 12px; }
+.share-panel p { margin: 6px 0 0; color: var(--muted); }
+
+/* The expanded view reuses the same canvas and controls; native dialog handles focus and Escape. */
+body.viewer-expanded-open { overflow: hidden; }
+.viewer-expanded {
+  width: 100vw; max-width: none; height: 100dvh; max-height: none; margin: 0;
+  padding: 16px 24px 24px; border: 0; background: var(--page-bg, #fff); color: var(--text); overflow-y: auto;
+}
+.viewer-expanded::backdrop { background: var(--page-bg, #fff); }
+.viewer-expanded[open] { display: flex; flex-direction: column; gap: 12px; }
+.expanded-heading { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; padding: 4px 0; background: var(--page-bg, #fff); }
+.expanded-heading p { margin: 0; font-size: 14px; color: var(--muted); }
+.expanded-heading .small { font-size: 13px; }
+.viewer-expanded .viewer { flex-shrink: 0; }
+/* The dialog heading names the view and the toolbar gives the drag hint, so the stage's own hint goes. */
+.viewer-expanded #viewer-expand, .viewer-expanded #viewer-kind { display: none; }
+.viewer-expanded .subjects { display: flex; justify-content: center; overflow-x: auto; }
+.viewer-expanded .subject { flex: 0 0 60px; }
+
+@media (min-width: 861px) and (min-height: 620px) {
+  .viewer-expanded .viewer { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .viewer-expanded .viewer-body { flex: 1; min-height: 0; }
+  .viewer-expanded .viewer-stage { display: flex; flex-direction: column; min-height: 0; }
+  .viewer-expanded .viewer-viewport { flex: 1; min-height: 180px; height: auto; }
+  .viewer-expanded .viewer-side { max-height: none; }
+  .viewer-expanded .subject-picker { flex-shrink: 0; padding: 8px 18px 10px; }
+  .viewer-expanded .subject-picker > p { text-align: center; margin-bottom: 5px; }
+}
+
+@media (max-width: 860px) {
+  .viewer-expanded { padding: 12px; }
+  .viewer-expanded .viewer-viewport { height: clamp(280px, 48svh, 440px); }
+  .viewer-expanded .subjects { justify-content: flex-start; }
+}
