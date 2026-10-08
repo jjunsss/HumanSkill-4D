@@ -149,7 +149,7 @@
     }
 
     /* Load an avatar: `buffer` holds count x 40 bytes; `camera` gives eye, target, up and fovy.
-       `keepView` keeps the complete camera and reuses GPU storage for motion frames. */
+       `keepView` keeps the current camera. */
     load(buffer, camera, keepView = false) {
       if (!buffer.byteLength || buffer.byteLength % STRIDE) throw new Error("Invalid Gaussian file length");
       if (![camera.eye, camera.target, camera.up].every((v) => v?.length === 3 && v.every(Number.isFinite)) ||
@@ -279,9 +279,9 @@
 
     tick(time) {
       if (!this.count || !this.active) return;
-      // Adapt during manipulation or playback; idle time must never count as a slow frame.
+      // Adapt during manipulation; idle time must never count as a slow frame.
       const elapsed = time - this.lastTick;
-      if ((this.dragging || this.animating || this.scrubbing) && this.lastTick !== null && elapsed > 40 && elapsed < 1000 && ++this.slow >= 3) {
+      if (this.dragging && this.lastTick !== null && elapsed > 40 && elapsed < 1000 && ++this.slow >= 3) {
         this.quality = Math.max(0.45, this.quality * 0.8);
         this.slow = 0;
       }
@@ -342,7 +342,7 @@
         pointers.delete(e.pointerId);
         pinch = 0;
         this.dragging = pointers.size > 0;
-        if (!this.dragging) this.quality = this.animating ? .7 : 1;
+        if (!this.dragging) this.quality = 1;
         touch();
       };
       canvas.addEventListener("pointerup", release);

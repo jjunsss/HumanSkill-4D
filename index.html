@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans:400,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="static/page.css?v=motion-1">
+  <link rel="stylesheet" href="static/page.css?v=views-1">
   <link rel="stylesheet" href="static/explorer-tools.css">
 </head>
 <body>
@@ -24,22 +24,28 @@
     <span class="author" data-aff="2">Dongyoon Han<sup>2,&dagger;</sup></span>
     <span class="author" data-aff="1">Seungryul Baek<sup>1,&dagger;</sup></span>
   </p>
-  <!-- Each affiliation selects its authors, the way a query selects an avatar's parts. -->
+  <!-- Each affiliation selects its authors, the way a query selects an avatar's parts. Logos: static/logos
+       (UNIST wordmark and NAVER logotype from Wikimedia Commons), shown on white tiles in their own colours. -->
   <p class="affiliations">
-    <button type="button" class="affiliation" data-aff="1" title="Select the authors from UNIST."><sup>1</sup>UNIST</button>
-    <button type="button" class="affiliation" data-aff="2" title="Select the authors from NAVER AI Lab."><sup>2</sup>NAVER AI Lab</button>
+    <button type="button" class="affiliation" data-aff="1" title="Select the authors from UNIST." aria-label="UNIST"><sup>1</sup><span class="aff-logo"><img src="static/logos/unist.svg" alt=""></span></button>
+    <button type="button" class="affiliation" data-aff="2" title="Select the authors from NAVER AI Lab." aria-label="NAVER AI Lab"><sup>2</sup><span class="aff-logo"><img src="static/logos/naver.svg" alt=""></span>AI Lab</button>
     <span><sup>&dagger;</sup>Corresponding authors</span>
   </p>
   <!-- The link targets below are not yet public. -->
   <nav class="links" aria-label="Paper resources">
-    <a class="button placeholder" href="#" data-pending="paper">Paper</a>
+    <a class="button placeholder" href="#" data-pending="paper">Paper (TODO)</a>
     <a class="button placeholder" href="#" data-pending="code">Code (TODO)</a>
   </nav>
 </header>
 
 <main>
 
-<!-- The page opens the way the teaser does: a query, and its answer. -->
+<!-- The teaser opens the page, playing muted; its controls turn the sound on. -->
+<section class="section" id="teaser">
+  <video id="hero" class="frame" muted loop playsinline controls autoplay preload="auto" aria-label="HumanSkill-4D teaser"></video>
+</section>
+
+<!-- Then a query and its answer, as in the teaser. -->
 <section class="section ask" id="ask">
   <p class="ask-query"><span class="glass" aria-hidden="true"></span><span id="ask-text">Can you select an avatar's parts and motions just by asking?</span></p>
   <div class="ask-answer">
@@ -51,7 +57,10 @@
   </div>
 </section>
 
+<hr class="section-rule">
 <section class="section explorer" id="where" aria-label="Interactive 3D referring segmentation">
+  <h2>3D Referring Segmentation</h2>
+  <p class="intro">Select parts or garments on an avatar, named directly or by appearance, function, or task. Drag to check the selection from any side.</p>
   <div class="viewer" id="viewer">
     <div class="viewer-body">
       <div class="viewer-stage">
@@ -104,21 +113,20 @@
 
 <!-- The 4D explorer mirrors the 3D one: queries beside the stage, and the people with saved answers for the chosen
      query appear below when multiple examples are available. -->
+<hr class="section-rule">
 <section class="section explorer" id="when" aria-label="Interactive 4D referring segmentation">
   <h2>4D Referring Segmentation</h2>
-  <p class="intro">Select parts or garments during a motion. Explore the featured example in 3D: turn the avatar, scrub through time, and play from your own viewpoint.</p>
+  <p class="intro">Select parts or garments during a motion. Switch the camera to check the selection from other sides.</p>
   <div class="viewer" id="clip-viewer">
     <div class="viewer-body">
       <div class="viewer-stage">
         <div class="viewer-head">
-          <span class="eyebrow">Choose a query. Explore its answer.</span>
+          <span class="eyebrow">Choose a query and a view.</span>
           <h2 id="clip-title"></h2>
         </div>
         <p class="clip-labels" id="clip-labels"><span>Original</span><span>HumanSkill-4D</span></p>
         <div class="clip-stage" id="clip-stage">
           <video id="clip" muted loop playsinline preload="none"></video>
-          <canvas id="moment-canvas" tabindex="0" hidden aria-label="The avatar at a predicted moment. Drag or use arrow keys to turn; scroll, pinch or use plus and minus to zoom."></canvas>
-          <div class="viewer-status" id="moment-status" role="status" hidden></div>
         </div>
         <div class="clip-bar">
           <div class="timeline" id="timeline" role="slider" aria-label="Clip time" tabindex="0">
@@ -126,16 +134,10 @@
           </div>
           <div class="clip-controls">
             <button type="button" id="clip-play" class="small">Play</button>
-            <button type="button" class="small rotate-cue" id="clip-rotate" hidden>Explore in 3D</button>
+            <span class="clip-views" id="clip-views" role="group" aria-label="Camera view"></span>
             <button type="button" id="clip-compare" class="small" aria-pressed="false">Compare original</button>
             <span class="frame-readout" id="frame-readout"></span>
-            <span class="moment-nav" id="moment-nav" hidden>
-              <button type="button" class="small" id="moment-prev" aria-label="Previous moment">&lsaquo;</button>
-              <button type="button" class="small" id="moment-next" aria-label="Next moment">&rsaquo;</button>
-              <button type="button" class="small" id="moment-back">Back to the clip</button>
-            </span>
           </div>
-          <p id="motion-hint" class="motion-hint"></p>
         </div>
       </div>
       <div class="viewer-side">
@@ -153,13 +155,8 @@
   <p class="note">Saved HumanSkill-4D answers from practical queries and the human-annotated benchmark.</p>
 </section>
 
-<section class="section" id="teaser">
-  <details id="teaser-details">
-    <summary>Watch the full teaser with sound</summary>
-    <video id="hero" class="frame" playsinline controls preload="none"></video>
-  </details>
-</section>
 
+<hr class="section-rule">
 <section class="section" id="compare-methods">
   <h2>Comparison with Prior Methods</h2>
   <p class="intro">This shows each method's saved predictions on benchmark queries.</p>
@@ -169,6 +166,7 @@
 </section>
 
 <!-- Each step lights up its panel of the pipeline figure; data-box is that panel as left, top, width, height in %. -->
+<hr class="section-rule">
 <section class="section" id="method">
   <h2>How It Works</h2>
   <p class="intro">Semantic memory resolves references to parts and garments, even by appearance or function. Motion memory lets geometric programs find matching moments from joint trajectories.</p>
@@ -209,9 +207,8 @@
   <p>Highlighted regions and intervals are rendered from the avatars' Gaussians using saved method outputs.</p>
 </footer>
 
-<script src="static/data.js?v=motion-1"></script>
-<script src="static/viewer.js?v=motion-1"></script>
-<script src="static/sequence.js?v=motion-1"></script>
-<script src="static/page.js?v=motion-1"></script>
+<script src="static/data.js?v=views-1"></script>
+<script src="static/viewer.js?v=views-1"></script>
+<script src="static/page.js?v=views-1"></script>
 </body>
 </html>
