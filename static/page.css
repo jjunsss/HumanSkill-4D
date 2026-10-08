@@ -241,13 +241,14 @@ q { quotes: "\201c" "\201d"; }
 .authors.lit-1 .author[data-aff="1"] { background: var(--unist); color: #fff; box-shadow: 0 0 0 1px var(--unist-text); }
 .authors.lit-2 .author[data-aff="2"] { background: var(--naver); color: var(--page-bg); }
 .authors[class*="lit-"] .author sup { color: inherit; }
-.affiliations { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 18px; margin: 10px 0 0; font-size: 15px; color: var(--muted); }
-.affiliation { display: inline-flex; align-items: center; gap: 6px; padding: 1px 6px; border: 0; border-radius: 4px; background: none; color: inherit; font-size: 15px; cursor: pointer; }
+/* the affiliations, with the two logos beside them (below them on a narrow screen) */
+.affiliation-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 22px; margin: 8px 0 0; }
+.affiliations { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 18px; margin: 0; font-size: 15px; color: var(--muted); }
+.affiliation { padding: 1px 6px; border: 0; border-radius: 4px; background: none; color: inherit; font-size: 15px; cursor: pointer; }
+.affiliation:hover, .affiliation:focus-visible { color: var(--strong); outline: none; }
+.aff-logos { display: flex; align-items: center; gap: 8px; margin: 0; padding-left: 22px; border-left: 1px solid var(--line); }
 /* logos keep their own colours on a white tile */
-.aff-logo { display: inline-flex; align-items: center; height: 28px; padding: 4px 9px; border-radius: 6px; background: #fff; }
-.aff-logo img { height: 18px; width: auto; }
-.affiliation[data-aff="1"]:hover .aff-logo, .affiliation[data-aff="1"]:focus-visible .aff-logo { box-shadow: 0 0 0 2px var(--unist-text); }
-.affiliation[data-aff="2"]:hover .aff-logo, .affiliation[data-aff="2"]:focus-visible .aff-logo { box-shadow: 0 0 0 2px var(--naver); }
+.aff-logos img { height: 26px; width: auto; padding: 5px 9px; border-radius: 6px; background: #fff; }
 .affiliation:hover, .affiliation:focus-visible { color: var(--strong); outline: none; }
 
 /* One inline 3D stage; thumbnails never create extra renderers. */
@@ -311,6 +312,8 @@ footer { max-width: var(--page); margin: 64px auto 0; padding: 20px 16px 40px; b
   .authors { margin-top: 14px; gap: 2px 8px; font-size: 16px; }
   .affiliations { gap: 2px 10px; font-size: 13px; }
   .affiliation { font-size: 13px; }
+  .aff-logos { padding-left: 0; border-left: 0; }
+  .aff-logos img { height: 22px; padding: 4px 7px; }
   .links { margin-top: 12px; }
   .ask.section { padding-top: 24px; }
   .ask-query { margin-bottom: 14px; padding: 12px 18px; }

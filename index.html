@@ -24,13 +24,19 @@
     <span class="author" data-aff="2">Dongyoon Han<sup>2,&dagger;</sup></span>
     <span class="author" data-aff="1">Seungryul Baek<sup>1,&dagger;</sup></span>
   </p>
-  <!-- Each affiliation selects its authors, the way a query selects an avatar's parts. Logos: static/logos
-       (UNIST wordmark and NAVER logotype from Wikimedia Commons), shown on white tiles in their own colours. -->
-  <p class="affiliations">
-    <button type="button" class="affiliation" data-aff="1" title="Select the authors from UNIST." aria-label="UNIST"><sup>1</sup><span class="aff-logo"><img src="static/logos/unist.svg" alt=""></span></button>
-    <button type="button" class="affiliation" data-aff="2" title="Select the authors from NAVER AI Lab." aria-label="NAVER AI Lab"><sup>2</sup><span class="aff-logo"><img src="static/logos/naver.svg" alt=""></span>AI Lab</button>
-    <span><sup>&dagger;</sup>Corresponding authors</span>
-  </p>
+  <!-- Each affiliation selects its authors, the way a query selects an avatar's parts. The logos sit beside the
+       affiliations (static/logos: UNIST wordmark and NAVER logotype from Wikimedia Commons), on white tiles. -->
+  <div class="affiliation-line">
+    <p class="affiliations">
+      <button type="button" class="affiliation" data-aff="1" title="Select the authors from UNIST."><sup>1</sup>UNIST</button>
+      <button type="button" class="affiliation" data-aff="2" title="Select the authors from NAVER AI Lab."><sup>2</sup>NAVER AI Lab</button>
+      <span><sup>&dagger;</sup>Corresponding authors</span>
+    </p>
+    <p class="aff-logos">
+      <img src="static/logos/unist.svg" alt="UNIST">
+      <img src="static/logos/naver.svg" alt="NAVER">
+    </p>
+  </div>
   <!-- The link targets below are not yet public. -->
   <nav class="links" aria-label="Paper resources">
     <a class="button placeholder" href="#" data-pending="paper">Paper (TODO)</a>
