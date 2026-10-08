@@ -403,19 +403,17 @@
   const clipSelectionCue = el("p", { class: "viewer-selection", "aria-hidden": "true" });
   $("#clip-viewer .viewer-head").after(clipSelectionCue);
   const moment = makeStage($("#moment-canvas"));
-  const clipState = { clip: null, momentIndex: -1, compareOriginal: false, sequenceFrame: null, sequencePlaying: false };
+  const clipState = { clip: null, compareOriginal: false, sequenceFrame: null, sequencePlaying: false };
   const motionHint = $("#motion-hint");
   let motionLoader = null, motionRequest = 0, motionRAF = null, motionDue = 0, motionBusy = false, motionShown = false, motionColors = null, motionTarget = null, motionScrubbing = false;
   const inSequence = () => clipState.sequenceFrame !== null;
-  const in3D = () => inSequence() || clipState.momentIndex >= 0;
   pauseMotion = (except) => { if (except !== $("#moment-canvas")) stopSequence(); };
   function updateComparison() {
-    for (const id of ["#clip-stage", "#clip-labels"]) $(id).classList.toggle("answer-view", in3D() || !clipState.compareOriginal);
+    for (const id of ["#clip-stage", "#clip-labels"]) $(id).classList.toggle("answer-view", inSequence() || !clipState.compareOriginal);
     compareButton.setAttribute("aria-pressed", String(clipState.compareOriginal));
     compareButton.textContent = inSequence() ? (clipState.compareOriginal ? "Show selection" : "Show original") :
       (clipState.compareOriginal ? "Focus on answer" : "Compare original");
     $("#clip-stage").classList.toggle("original-motion", inSequence() && clipState.compareOriginal);
-    compareButton.disabled = clipState.momentIndex >= 0;
   }
   compareButton.addEventListener("click", () => {
     clipState.compareOriginal = !clipState.compareOriginal;
@@ -473,7 +471,7 @@
 
   function showClip(clip) {
     pauseVideos();
-    leaveMoment(false);
+    if (inSequence()) leaveSequence(false);
     if (motionLoader) { motionLoader.close(); motionLoader = null; }
     if (clipState.clip?.query !== clip.query) listPeople(clip.query);
     clipState.clip = clip;
@@ -481,7 +479,7 @@
     peopleButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.clip === clip)));
     $("#clip-title").textContent = clip.person;
     clipSelectionCue.replaceChildren(el("span", { class: "swatch" }), el("q", { text: clip.query }));
-    motionHint.textContent = clip.sequence ? "Explore every frame in 3D. Drag to turn, scrub to change time, or play the motion." : "Play the video, or explore the marked moments in 3D.";
+    motionHint.textContent = clip.sequence ? "Explore every frame in 3D. Drag to turn, scrub to change time, or play the motion." : "The selection shows only while the motion happens.";
     const intervalCount = `${clip.intervals.length} interval${clip.intervals.length === 1 ? "" : "s"}`;
     $("#clip-answer").replaceChildren(el("dl", {},
       el("dt", {}, el("span", { class: "swatch" }), "Selected"), el("dd", { text: clip.moments[0].prompts[0].categories.join(", ") }),
@@ -501,10 +499,11 @@
       timeline.insertBefore(el("div", { class: "interval",
         style: `left:${(100 * (a - clip.first)) / length}%;width:${(100 * (b + 1 - a)) / length}%` }), playhead);
     }
-    clip.moments.forEach((m, i) => {
+    // Only a clip with every native frame turns in 3D; its moment dots open those frames. Other clips play as video.
+    if (clip.sequence) clip.moments.forEach((m) => {
       const dot = el("button", { class: "moment", type: "button", style: `left:${place(clip, m.frame)}`,
         title: `Turn frame ${m.frame} in 3D`, "aria-label": `Turn frame ${m.frame} in 3D` });
-      dot.addEventListener("click", (event) => { event.stopPropagation(); enterMoment(i); });
+      dot.addEventListener("click", (event) => { event.stopPropagation(); enterSequence(m.frame, false); });
       timeline.append(dot);
     });
     updatePlayState();
@@ -513,8 +512,7 @@
   function updatePlayState() {
     const paused = inSequence() ? !clipState.sequencePlaying : clipVideo.paused || clipVideo.userPaused;
     playButton.textContent = paused ? "Play" : "Pause";
-    rotateCue.hidden = in3D() || (!clipState.clip?.sequence && !paused);
-    rotateCue.textContent = clipState.clip?.sequence ? "Explore in 3D" : "Saved 3D moment";
+    rotateCue.hidden = inSequence() || !clipState.clip?.sequence;
   }
   for (const type of ["play", "pause"]) clipVideo.addEventListener(type, updatePlayState);
 
@@ -525,7 +523,6 @@
   }
 
   function togglePlay() {
-    if (clipState.momentIndex >= 0) return;
     clipVideo.userPaused = !clipVideo.paused;
     if (clipVideo.userPaused) clipVideo.pause(); else resumeClip();
     updatePlayState();
@@ -538,15 +535,12 @@
         if (moment.viewer) { moment.viewer.animating = true; moment.viewer.quality = .7; moment.viewer.lastTick = null; }
         motionDue = 0; queueSequence(); updatePlayState();
       }
-    } else if (clipState.momentIndex >= 0) leaveMoment(true);
-    else togglePlay();
+    } else togglePlay();
   });
   clipVideo.addEventListener("click", togglePlay);
   rotateCue.addEventListener("click", () => {
     const clip = clipState.clip, now = clipVideo.readyState < 2 ? clip.moments[0].frame : frameNow(clip);
-    if (clip.sequence) { enterSequence(now, !clipVideo.paused); return; }
-    const nearest = clip.moments.reduce((best, m, i) => (Math.abs(m.frame - now) < Math.abs(clip.moments[best].frame - now) ? i : best), 0);
-    enterMoment(nearest);
+    enterSequence(now, !clipVideo.paused);
   });
 
   // The featured sequence keeps the exact source frame and a fixed camera across geometry updates.
@@ -653,7 +647,6 @@
     if (!inSequence()) {
       moment.cancel();
       motionShown = false;
-      clipState.momentIndex = -1;
       clipState.sequenceFrame = frame;
     }
     clipVideo.userPaused = true;
@@ -700,72 +693,16 @@
     updatePlayState();
   }
 
-  // Other clips retain their reviewed saved poses; their buttons name that scope explicitly.
-  async function enterMoment(index) {
-    const clip = clipState.clip, m = clip.moments[index], stepping = clipState.momentIndex >= 0;
-    if (clip.sequence) { enterSequence(m.frame, false); return; }
-    clipState.momentIndex = index;
-    clipVideo.userPaused = true;
-    clipVideo.pause();
-    clipVideo.currentTime = seconds(clip, m.frame);
-    $("#moment-canvas").hidden = false;
-    $("#moment-status").hidden = false;
-    $("#moment-status").classList.remove("motion-loading");
-    $("#moment-status").textContent = `Loading frame ${m.frame}…`;
-    readout.textContent = `Loading frame ${m.frame}…`;
-    $("#moment-nav").hidden = false;
-    $("#clip-labels").classList.add("moment");
-    updateComparison();
-    rotateCue.hidden = true;
-    playButton.textContent = "Play";
-    moment.wanted = true;
-    moment.update();
-    $("#moment-prev").disabled = true;
-    $("#moment-next").disabled = true;
-    $("#moment-prev").setAttribute("aria-label", "Previous saved moment");
-    $("#moment-next").setAttribute("aria-label", "Next saved moment");
-    try {
-      if (!(await moment.load(m, stepping))) return;
-    } catch (error) {
-      const retry = el("button", { type: "button", class: "small", text: "Try again" });
-      retry.addEventListener("click", () => enterMoment(index));
-      $("#moment-status").replaceChildren(`Could not load frame ${m.frame}. ${error.message}`, retry);
-      readout.textContent = "Frame unavailable";
-      return;
-    }
-    $("#moment-status").hidden = true;
-    moment.show(m.prompts[0]);
-    $("#moment-prev").disabled = index === 0;
-    $("#moment-next").disabled = index === clip.moments.length - 1;
-    playhead.style.left = place(clip, m.frame);
-    readout.replaceChildren(`frame ${m.frame}`, el("span", { class: "live", text: " · selected" }));
-    timeline.setAttribute("aria-valuenow", String(m.frame));
-    timeline.setAttribute("aria-valuetext", `Frame ${m.frame}, selected`);
-  }
-
-  function leaveMoment(resume) {
-    if (inSequence()) { leaveSequence(resume); return; }
-    if (clipState.momentIndex < 0) return;
-    clipState.momentIndex = -1;
-    moment.cancel();
-    $("#moment-canvas").hidden = true;
-    $("#moment-status").hidden = true;
-    $("#moment-nav").hidden = true;
-    $("#clip-labels").classList.remove("moment");
-    updateComparison();
-    if (resume) resumeClip();
-    updatePlayState();
-  }
-  $("#moment-prev").addEventListener("click", () => inSequence() ? seekSequence(motionTarget - 1) : enterMoment(clipState.momentIndex - 1));
-  $("#moment-next").addEventListener("click", () => inSequence() ? seekSequence(motionTarget + 1) : enterMoment(clipState.momentIndex + 1));
-  $("#moment-back").addEventListener("click", () => leaveMoment(true));
+  $("#moment-prev").addEventListener("click", () => seekSequence(motionTarget - 1));
+  $("#moment-next").addEventListener("click", () => seekSequence(motionTarget + 1));
+  $("#moment-back").addEventListener("click", () => leaveSequence(true));
 
   // The playhead and readout follow the clip only while it shows and only when its frame changes.
   let shownFrame = null, followRequest = null;
   const videoFrames = typeof clipVideo.requestVideoFrameCallback === "function";
   function follow() {
     const clip = clipState.clip;
-    if (!clip || !clipVideo.wanted || in3D() || clipVideo.readyState < 2) return;
+    if (!clip || !clipVideo.wanted || inSequence() || clipVideo.readyState < 2) return;
     const current = frameNow(clip);
     if (shownFrame === `${clip.id}:${current}`) return;
     shownFrame = `${clip.id}:${current}`;
@@ -778,7 +715,7 @@
     timeline.setAttribute("aria-valuetext", `Frame ${current}${live ? ", selected" : ""}`);
   }
   function queueFollow() {
-    if (followRequest !== null || clipVideo.paused || !clipVideo.wanted || document.hidden || in3D()) return;
+    if (followRequest !== null || clipVideo.paused || !clipVideo.wanted || document.hidden || inSequence()) return;
     const callback = () => { followRequest = null; follow(); queueFollow(); };
     followRequest = videoFrames ? clipVideo.requestVideoFrameCallback(callback) : requestAnimationFrame(callback);
   }
@@ -810,7 +747,7 @@
     const fraction = Math.min(1, Math.max(0, (scrubX - box.left) / box.width));
     const frame = Math.min(clip.end - 1, clip.first + Math.floor(fraction * (clip.end - clip.first)));
     if (inSequence()) seekSequence(frame);
-    else { leaveMoment(false); clipVideo.userPaused = true; clipVideo.pause(); seekClip(seconds(clip, frame)); }
+    else { clipVideo.userPaused = true; clipVideo.pause(); seekClip(seconds(clip, frame)); }
   }
   timeline.addEventListener("pointerdown", (event) => {
     if (event.target.closest("button")) return;
@@ -842,7 +779,7 @@
       const clip = clipState.clip;
       const frame = event.key === "Home" ? clip.first : event.key === "End" ? clip.end - 1 : (inSequence() ? motionTarget : frameNow(clip)) + step;
       if (inSequence()) seekSequence(frame);
-      else { leaveMoment(false); clipVideo.userPaused = true; clipVideo.pause(); seekClip(seconds(clip, frame)); }
+      else { clipVideo.userPaused = true; clipVideo.pause(); seekClip(seconds(clip, frame)); }
     }
   });
   showClip(D.clips4d[0]);
