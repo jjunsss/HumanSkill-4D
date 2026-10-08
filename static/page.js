@@ -363,31 +363,32 @@
   playWhileVisible($("#when"), clipVideo);
   whileVisible($("#when"), () => { moment.visible = true; moment.update(); }, () => { moment.visible = false; moment.update(); });
 
-  // Group the cases by query family; a family whose queries differ in one word shows "left / right".
-  const families = new Map();
+  // As in the 3D explorer: the queries beside the stage, and below it the people (clips) that answered the
+  // chosen query, in data order. A query opens on its first person, its representative.
+  const byQuery = new Map();
   for (const clip of D.clips4d) {
-    const family = clip.id.split("_")[0];
-    if (!families.has(family)) families.set(family, []);
-    families.get(family).push(clip);
+    if (!byQuery.has(clip.query)) byQuery.set(clip.query, []);
+    byQuery.get(clip.query).push(clip);
   }
-  function familyTitle(clips) {
-    const words = clips.map((clip) => clip.query.split(" "));
-    const differing = words[0].map((_, i) => [...new Set(words.map((w) => w[i]))]);
-    if (words.some((w) => w.length !== words[0].length) || differing.filter((v) => v.length > 1).length > 1) return clips[0].query;
-    return differing.map((variants) => variants.join(" / ")).join(" ");
-  }
-  const caseButtons = [];
-  for (const clips of families.values()) {
-    const row = el("div", { class: "case-row" });
-    for (const clip of clips) {
-      const button = el("button", { class: "case", type: "button", role: "tab", "aria-label": `${clip.clip}, ${clip.dataset}` },
-        el("img", { src: clip.thumb, alt: "", loading: "lazy" }), el("span", { text: clip.clip }));
+  const queryButtons = [...byQuery.keys()].map((query) => {
+    const button = el("button", { class: "prompt", type: "button", "aria-pressed": "false", text: query });
+    button.query = query;
+    button.addEventListener("click", () => showClip(byQuery.get(query)[0], true));
+    $("#clip-queries").append(button);
+    return button;
+  });
+  let peopleButtons = [];
+  function listPeople(query) {
+    peopleButtons = byQuery.get(query).map((clip) => {
+      const button = el("button", { class: "subject", type: "button", "aria-pressed": "false", title: `${clip.person}, clip ${clip.clip}`,
+        "aria-label": `${clip.person}, clip ${clip.clip}` },
+        el("img", { class: "subject-preview", src: clip.thumb, alt: "", loading: "lazy" }),
+        el("span", { class: "subject-label", text: clip.person.split(" ").pop() }));
       button.clip = clip;
-      button.addEventListener("click", () => showClip(clip, true));
-      caseButtons.push(button);
-      row.append(button);
-    }
-    $("#clip-cases").append(el("div", { class: "case-group" }, el("p", { text: familyTitle(clips) }), row));
+      button.addEventListener("click", () => { if (clipState.clip !== clip) showClip(clip, true); });
+      return button;
+    });
+    $("#clip-people").replaceChildren(...peopleButtons);
   }
 
   const seconds = (clip, sourceFrame) => (sourceFrame - clip.first) / clip.fps;
@@ -396,9 +397,15 @@
 
   function showClip(clip, play = false) {
     leaveMoment(false);
+    if (clipState.clip?.query !== clip.query) listPeople(clip.query);
     clipState.clip = clip;
-    caseButtons.forEach((button) => button.setAttribute("aria-selected", String(button.clip === clip)));
-    $("#clip-query").textContent = clip.query;
+    queryButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.query === clip.query)));
+    peopleButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.clip === clip)));
+    $("#clip-title").textContent = clip.person;
+    const intervalCount = `${clip.intervals.length} interval${clip.intervals.length === 1 ? "" : "s"}`;
+    $("#clip-answer").replaceChildren(el("dl", {},
+      el("dt", {}, el("span", { class: "swatch" }), "Selected"), el("dd", { text: clip.moments[0].prompts[0].categories.join(", ") }),
+      el("dt", {}, "When"), el("dd", { text: intervalCount })));
     clipVideo.poster = clip.poster;
     clipVideo.userPaused = !play;
     setSource(clipVideo, clip.video);
