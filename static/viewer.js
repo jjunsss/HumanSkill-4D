@@ -2,7 +2,7 @@
 
    Each avatar file holds, per Gaussian, its world position, its 3D covariance (the six upper
    entries, as the rasterizer's cov3D_precomp) and an RGBA colour, 40 bytes in all. Gaussians are
-   sorted front to back on every view change and drawn as screen-space ellipses (3 sigma quads)
+   sorted front to back on view or geometry changes and drawn as screen-space ellipses (3 sigma quads)
    with front-to-back alpha blending, as the 3D Gaussian splatting rasterizer composites them. */
 (() => {
   "use strict";
@@ -149,20 +149,28 @@
     }
 
     /* Load an avatar: `buffer` holds count x 40 bytes; `camera` gives eye, target, up and fovy.
-       `keepView` keeps the current turn and zoom, for stepping through one clip's moments. */
+       `keepView` keeps the complete camera and reuses GPU storage for motion frames. */
     load(buffer, camera, keepView = false) {
       if (!buffer.byteLength || buffer.byteLength % STRIDE) throw new Error("Invalid Gaussian file length");
       if (![camera.eye, camera.target, camera.up].every((v) => v?.length === 3 && v.every(Number.isFinite)) ||
           !Number.isFinite(camera.fovy) || camera.fovy <= 0 || camera.fovy >= Math.PI) throw new Error("Invalid avatar camera");
-      const kept = keepView && this.count ? { azimuth: this.azimuth, elevation: this.elevation, distance: this.distance } : null;
+      const kept = keepView && this.count;
       const gl = this.gl;
       const n = buffer.byteLength / STRIDE;
       const rows = Math.ceil(n / WIDTH);
-      const view = new DataView(buffer);
-      const center = new Float32Array(WIDTH * rows * 4), covA = new Float32Array(WIDTH * rows * 4);
-      const covB = new Float32Array(WIDTH * rows * 4), color = new Uint8Array(WIDTH * rows * 4);
-      this.positions = new Float32Array(n * 3);
-      this.base = new Uint8Array(n * 4);
+      const view = ArrayBuffer.isView(buffer) ? new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength) : new DataView(buffer);
+      const resize = this.count !== n;
+      if (resize) {
+        this.fields = [new Float32Array(WIDTH * rows * 4), new Float32Array(WIDTH * rows * 4),
+          new Float32Array(WIDTH * rows * 4), new Uint8Array(WIDTH * rows * 4)];
+        this.positions = new Float32Array(n * 3);
+        this.base = new Uint8Array(n * 4);
+        this.order = new Uint32Array(n);
+        this.depths = new Float32Array(n);
+        this.keys = new Uint32Array(n);
+        this.counts = new Uint32Array(65536);
+      }
+      const [center, covA, covB, color] = this.fields;
       for (let i = 0; i < n; i++) {
         const o = i * STRIDE;
         for (let k = 0; k < 3; k++) center[4 * i + k] = this.positions[3 * i + k] = view.getFloat32(o + 4 * k, true);
@@ -170,24 +178,24 @@
         for (let k = 0; k < 2; k++) covB[4 * i + k] = view.getFloat32(o + 28 + 4 * k, true);
         for (let k = 0; k < 4; k++) color[4 * i + k] = this.base[4 * i + k] = view.getUint8(o + 36 + k);
       }
-      for (const tex of this.textures || []) gl.deleteTexture(tex);
-      this.textures = [
-        texture(gl, 0, gl.RGBA32F, gl.RGBA, gl.FLOAT, center, rows),
-        texture(gl, 1, gl.RGBA32F, gl.RGBA, gl.FLOAT, covA, rows),
-        texture(gl, 2, gl.RGBA32F, gl.RGBA, gl.FLOAT, covB, rows),
-        texture(gl, 3, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, color, rows),
-      ];
+      if (resize) {
+        for (const tex of this.textures || []) gl.deleteTexture(tex);
+        this.textures = this.fields.map((field, i) => texture(gl, i, i === 3 ? gl.RGBA8 : gl.RGBA32F,
+          gl.RGBA, i === 3 ? gl.UNSIGNED_BYTE : gl.FLOAT, field, rows));
+      } else {
+        this.fields.forEach((field, i) => {
+          gl.activeTexture(gl.TEXTURE0 + i);
+          gl.bindTexture(gl.TEXTURE_2D, this.textures[i]);
+          gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, WIDTH, rows, gl.RGBA, i === 3 ? gl.UNSIGNED_BYTE : gl.FLOAT, field);
+        });
+      }
       this.rows = rows;
       this.colorUpload = color;
       this.count = n;
-      this.order = new Uint32Array(n);
-      this.depths = new Float32Array(n);
-      this.keys = new Uint32Array(n);           // sort buffers, allocated once per avatar
-      this.counts = new Uint32Array(65536);
+      // Motion changes the depth order even when the camera has not moved.
       this.sortedDir = null;
-      this.camera = camera;
-      this.reset();
-      if (kept) Object.assign(this, kept);
+      if (!kept) { this.camera = camera; this.reset(); }
+      else this.invalidate();
     }
 
     goHome() {
@@ -271,9 +279,9 @@
 
     tick(time) {
       if (!this.count || !this.active) return;
-      // Adapt only during a continuous drag; idle time must never count as a slow frame.
+      // Adapt during manipulation or playback; idle time must never count as a slow frame.
       const elapsed = time - this.lastTick;
-      if (this.dragging && this.lastTick !== null && elapsed > 40 && elapsed < 1000 && ++this.slow >= 3) {
+      if ((this.dragging || this.animating || this.scrubbing) && this.lastTick !== null && elapsed > 40 && elapsed < 1000 && ++this.slow >= 3) {
         this.quality = Math.max(0.45, this.quality * 0.8);
         this.slow = 0;
       }
@@ -334,7 +342,7 @@
         pointers.delete(e.pointerId);
         pinch = 0;
         this.dragging = pointers.size > 0;
-        if (!this.dragging) this.quality = 1;
+        if (!this.dragging) this.quality = this.animating ? .7 : 1;
         touch();
       };
       canvas.addEventListener("pointerup", release);

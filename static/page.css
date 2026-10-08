@@ -157,6 +157,7 @@ q { quotes: "\201c" "\201d"; }
 .clip-stage video { width: 100%; height: 100%; }
 .clip-stage.answer-view { max-width: 600px; margin: 0 auto; aspect-ratio: 1; }
 .clip-stage.answer-view video { width: 200%; max-width: none; transform: translateX(-50%); }
+.clip-stage.original-motion video { transform: none; }
 #moment-canvas { position: absolute; inset: 0; width: 100%; height: 100%; background: linear-gradient(var(--stage-top), var(--stage-bottom)); touch-action: none; cursor: grab; }
 .rotate-cue {
   border-color: var(--select);
@@ -164,7 +165,11 @@ q { quotes: "\201c" "\201d"; }
 }
 .rotate-cue:hover { background: var(--select); color: #fff; }
 .moment-nav { display: flex; gap: 6px; }
-.timeline { position: relative; height: 28px; margin-top: 10px; cursor: pointer; }
+.timeline { position: relative; height: 28px; margin-top: 10px; cursor: pointer; touch-action: none; }
+.motion-hint { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.motion-badge { display: block; margin-top: 6px; color: var(--interval); font: 600 11px/1.4 "Noto Sans", sans-serif; }
+#moment-status.motion-loading { inset: auto 10px 10px; border-radius: 5px; padding: 8px 12px; background: var(--panel); font-size: 12px; pointer-events: none; }
+#moment-status.motion-loading button { pointer-events: auto; }
 .timeline .track { position: absolute; left: 0; right: 0; top: 11px; height: 6px; border-radius: 3px; background: var(--line); }
 .timeline .interval { position: absolute; top: 11px; height: 6px; border-radius: 3px; background: var(--interval); }
 .timeline .playhead { position: absolute; top: 5px; width: 2px; height: 18px; margin-left: -1px; background: var(--strong); }

@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans:400,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@1,500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="static/page.css">
+  <link rel="stylesheet" href="static/page.css?v=motion-1">
   <link rel="stylesheet" href="static/explorer-tools.css">
 </head>
 <body>
@@ -107,12 +107,12 @@
      query appear below when multiple examples are available. -->
 <section class="section explorer" id="when" aria-label="Interactive 4D referring segmentation">
   <h2>4D Referring Segmentation</h2>
-  <p class="intro">Select parts or garments during a motion. Try a query, or pause to turn a matching moment in 3D.</p>
+  <p class="intro">Select parts or garments during a motion. Explore the featured example in 3D: turn the avatar, scrub through time, and play from your own viewpoint.</p>
   <div class="viewer" id="clip-viewer">
     <div class="viewer-body">
       <div class="viewer-stage">
         <div class="viewer-head">
-          <span class="eyebrow">Play, pause, and turn a moment in 3D</span>
+          <span class="eyebrow">Choose a query. Explore its answer.</span>
           <h2 id="clip-title"></h2>
         </div>
         <p class="clip-labels" id="clip-labels"><span>Original</span><span>HumanSkill-4D</span></p>
@@ -136,6 +136,7 @@
               <button type="button" class="small" id="moment-back">Back to the clip</button>
             </span>
           </div>
+          <p id="motion-hint" class="motion-hint"></p>
         </div>
       </div>
       <div class="viewer-side">
@@ -209,8 +210,9 @@
   <p>Highlighted regions and intervals are rendered from the avatars' Gaussians using saved method outputs.</p>
 </footer>
 
-<script src="static/data.js"></script>
-<script src="static/viewer.js"></script>
-<script src="static/page.js"></script>
+<script src="static/data.js?v=motion-1"></script>
+<script src="static/viewer.js?v=motion-1"></script>
+<script src="static/sequence.js?v=motion-1"></script>
+<script src="static/page.js?v=motion-1"></script>
 </body>
 </html>
