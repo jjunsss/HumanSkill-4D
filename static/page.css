@@ -131,7 +131,8 @@ q { quotes: "\201c" "\201d"; }
 .ask-query .glass::after { content: ""; position: absolute; right: -6px; bottom: -4px; width: 7px; height: 2px; background: var(--muted); transform: rotate(45deg); }
 .ask-query.typing #ask-text::after { content: "|"; margin-left: 1px; color: var(--select-text); }
 .ask-answer { transition: opacity .5s ease, transform .5s ease; }
-.ask-answer p { margin: 0 auto; max-width: 680px; font-size: 18px; line-height: 1.65; text-wrap: pretty; }
+/* one sentence per line; a sentence that must wrap splits into even lines, never a stub */
+.ask-answer p { margin: 0 auto; max-width: 860px; font-size: 18px; line-height: 1.65; text-wrap: balance; }
 .ask-answer .ask-yes {
   margin-bottom: 6px;
   font: 700 clamp(44px, 7vw, 64px)/1 "Google Sans", "Noto Sans", sans-serif;
