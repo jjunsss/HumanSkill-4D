@@ -177,6 +177,19 @@
   const explorer = makeStage($("#viewer-canvas"));
   const ex = { index: 2, prompt: null, promptId: "sunscreen", original: false };
   const promptButtons = [], subjectButtons = [];
+  const selectionCue = el("p", { class: "viewer-selection", "aria-hidden": "true" });
+  $("#viewer .viewer-head").after(selectionCue);
+
+  // After a mobile choice, keep the selected query and its avatar together in view. The same stage
+  // lives in the expanded dialog, whose sticky heading has its own scroll margin.
+  function revealResult(target, force = false) {
+    if (!force && !window.matchMedia("(max-width: 860px)").matches) return;
+    const box = target.getBoundingClientRect();
+    const inset = target.closest("#viewer-expanded") ? 64 : 8;
+    if (box.top < inset || box.bottom > innerHeight - 8) {
+      target.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
+    }
+  }
   whileVisible($("#viewer-viewport"), () => { explorer.visible = true; explorer.update(); }, () => { explorer.visible = false; explorer.update(); });
 
   D.viewer3d.forEach((item, i) => {
@@ -184,7 +197,10 @@
       el("span", { class: "subject-preview", "aria-hidden": "true",
         style: `background-image:url(${D.sprite});background-position:${(i % 3) * 50}% ${Math.floor(i / 3) * 50}%` }),
       el("span", { class: "subject-label", text: item.title.replace("ZJU-MoCap ", "") }));
-    button.addEventListener("click", () => { if (i !== ex.index || !explorer.item) showAvatar(i); });
+    button.addEventListener("click", () => {
+      if (i !== ex.index || !explorer.item) showAvatar(i);
+      revealResult($("#viewer .viewer-stage"));
+    });
     subjectButtons.push(button);
     $("#viewer-subjects").append(button);
   });
@@ -204,7 +220,10 @@
       const buttons = prompts.map((prompt) => {
         const button = el("button", { class: "prompt", type: "button", "aria-pressed": "false", "data-prompt": prompt.id, text: prompt.query });
         button.prompt = prompt;
-        button.addEventListener("click", () => choose(prompt));
+        button.addEventListener("click", () => {
+          choose(prompt);
+          revealResult($("#viewer .viewer-stage"));
+        });
         promptButtons.push(button);
         return button;
       });
@@ -230,6 +249,8 @@
     $("#viewer-answer").replaceChildren(...(prompt ? [el("dl", {},
       el("dt", {}, el("span", { class: "swatch" }), "Selected"), el("dd", { text: prompt.categories.join(", ") }))] :
       [el("p", { text: "This query is not available for this avatar. Choose another example." })]));
+    selectionCue.replaceChildren(...(prompt ? [el("span", { class: "swatch" }), el("q", { text: prompt.query })] :
+      ["Saved answer unavailable for this avatar. Choose another query."]));
     $("#viewer-original").disabled = !prompt;
     $("#viewer-share").disabled = !prompt;
   }
@@ -253,6 +274,7 @@
     subjectButtons.forEach((button, i) => button.setAttribute("aria-pressed", String(i === index)));
     $("#viewer-status").hidden = false;
     $("#viewer-status").textContent = `Loading ${item.title}…`;
+    selectionCue.textContent = `Loading ${item.title}…`;
     $("#viewer").setAttribute("aria-busy", "true");
     for (const button of [...promptButtons, $("#viewer-original"), $("#viewer-reset"), $("#viewer-share")]) button.disabled = true;
     try {
@@ -322,6 +344,7 @@
       $("#viewer-prompts").replaceChildren();
       promptButtons.length = 0;
       $("#viewer-answer").replaceChildren();
+      selectionCue.textContent = "Choose an avatar below to explore.";
       for (const id of ["#viewer-original", "#viewer-reset", "#viewer-share"]) $(id).disabled = true;
       subjectButtons.forEach((button) => button.setAttribute("aria-pressed", "false"));
     } else {
@@ -357,14 +380,29 @@
   const playhead = $("#playhead");
   const readout = $("#frame-readout");
   const playButton = $("#clip-play");
+  const compareButton = $("#clip-compare");
   const rotateCue = $("#clip-rotate");
+  const clipStage = $("#clip-viewer .viewer-stage");
+  const clipSelectionCue = el("p", { class: "viewer-selection", "aria-hidden": "true" });
+  $("#clip-viewer .viewer-head").after(clipSelectionCue);
   const moment = makeStage($("#moment-canvas"));
-  const clipState = { clip: null, momentIndex: -1 };
-  playWhileVisible($("#when"), clipVideo);
-  whileVisible($("#when"), () => { moment.visible = true; moment.update(); }, () => { moment.visible = false; moment.update(); });
+  const clipState = { clip: null, momentIndex: -1, compareOriginal: false };
+  function updateComparison() {
+    for (const id of ["#clip-stage", "#clip-labels"]) $(id).classList.toggle("answer-view", !clipState.compareOriginal);
+    compareButton.setAttribute("aria-pressed", String(clipState.compareOriginal));
+    compareButton.textContent = clipState.compareOriginal ? "Focus on answer" : "Compare original";
+    compareButton.disabled = clipState.momentIndex >= 0;
+  }
+  compareButton.addEventListener("click", () => {
+    clipState.compareOriginal = !clipState.compareOriginal;
+    updateComparison();
+  });
+  updateComparison();
+  playWhileVisible($("#clip-stage"), clipVideo);
+  whileVisible($("#clip-stage"), () => { moment.visible = true; moment.update(); }, () => { moment.visible = false; moment.update(); });
 
-  // As in the 3D explorer: the queries beside the stage, and below it the people (clips) that answered the
-  // chosen query, in data order. A query opens on its first person, its representative.
+  // Queries sit beside the stage, with the people answering that query below it, as in the 3D explorer.
+  // The first saved answer is the representative; picking it keeps playback paused.
   const byQuery = new Map();
   for (const clip of D.clips4d) {
     if (!byQuery.has(clip.query)) byQuery.set(clip.query, []);
@@ -373,42 +411,57 @@
   const queryButtons = [...byQuery.keys()].map((query) => {
     const button = el("button", { class: "prompt", type: "button", "aria-pressed": "false", text: query });
     button.query = query;
-    button.addEventListener("click", () => showClip(byQuery.get(query)[0], true));
+    button.addEventListener("click", () => {
+      showClip(byQuery.get(query)[0]);
+      revealResult(clipStage);
+    });
     $("#clip-queries").append(button);
     return button;
   });
   let peopleButtons = [];
   function listPeople(query) {
-    peopleButtons = byQuery.get(query).map((clip) => {
-      const button = el("button", { class: "subject", type: "button", "aria-pressed": "false", title: `${clip.person}, clip ${clip.clip}`,
-        "aria-label": `${clip.person}, clip ${clip.clip}` },
+    const clips = byQuery.get(query);
+    peopleButtons = clips.map((clip) => {
+      const button = el("button", { class: "subject", type: "button", "aria-pressed": "false",
+        title: `${clip.person}, clip ${clip.clip}`, "aria-label": `${clip.person}, clip ${clip.clip}` },
         el("img", { class: "subject-preview", src: clip.thumb, alt: "", loading: "lazy" }),
         el("span", { class: "subject-label", text: clip.person.split(" ").pop() }));
       button.clip = clip;
-      button.addEventListener("click", () => { if (clipState.clip !== clip) showClip(clip, true); });
+      button.addEventListener("click", () => {
+        if (clipState.clip !== clip) showClip(clip);
+        revealResult(clipStage);
+      });
       return button;
     });
     $("#clip-people").replaceChildren(...peopleButtons);
+    $("#clip-people").closest(".subject-picker").hidden = clips.length < 2;
   }
 
   const seconds = (clip, sourceFrame) => (sourceFrame - clip.first) / clip.fps;
   const frameNow = (clip) => clip.first + Math.min(clip.end - clip.first - 1, Math.floor(clipVideo.currentTime * clip.fps + 1e-3));
   const place = (clip, frame) => `${(100 * (frame - clip.first + 0.5)) / (clip.end - clip.first)}%`;
 
-  function showClip(clip, play = false) {
+  function showClip(clip) {
+    pauseVideos();
     leaveMoment(false);
     if (clipState.clip?.query !== clip.query) listPeople(clip.query);
     clipState.clip = clip;
     queryButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.query === clip.query)));
     peopleButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.clip === clip)));
     $("#clip-title").textContent = clip.person;
+    clipSelectionCue.replaceChildren(el("span", { class: "swatch" }), el("q", { text: clip.query }));
     const intervalCount = `${clip.intervals.length} interval${clip.intervals.length === 1 ? "" : "s"}`;
     $("#clip-answer").replaceChildren(el("dl", {},
       el("dt", {}, el("span", { class: "swatch" }), "Selected"), el("dd", { text: clip.moments[0].prompts[0].categories.join(", ") }),
       el("dt", {}, "When"), el("dd", { text: intervalCount })));
     clipVideo.poster = clip.poster;
-    clipVideo.userPaused = !play;
+    clipVideo.userPaused = true;
     setSource(clipVideo, clip.video);
+    readout.textContent = "Saved preview · press Play";
+    playhead.style.left = place(clip, clip.first);
+    timeline.setAttribute("aria-valuemin", String(clip.first));
+    timeline.setAttribute("aria-valuemax", String(clip.end - 1));
+    timeline.setAttribute("aria-valuenow", String(clip.first));
     timeline.querySelectorAll(".interval, .moment").forEach((node) => node.remove());
     const length = clip.end - clip.first;
     for (const [a, b] of clip.intervals) {
@@ -428,18 +481,19 @@
     const paused = clipVideo.paused || clipVideo.userPaused;
     playButton.textContent = paused ? "Play" : "Pause";
     rotateCue.hidden = !paused || clipState.momentIndex >= 0;
-    if (!rotateCue.hidden && clipState.clip) {
-      const now = frameNow(clipState.clip);
-      const nearest = clipState.clip.moments.reduce((a, b) => Math.abs(a.frame - now) <= Math.abs(b.frame - now) ? a : b);
-      rotateCue.textContent = `Turn saved frame ${nearest.frame} in 3D`;
-    }
   }
   for (const type of ["play", "pause"]) clipVideo.addEventListener(type, updatePlayState);
+
+  function resumeClip() {
+    clipVideo.userPaused = false;
+    if (clipVideo.wanted && !document.hidden) clipVideo.play().catch(() => {});
+    else revealResult(clipStage, true);
+  }
 
   function togglePlay() {
     if (clipState.momentIndex >= 0) return;
     clipVideo.userPaused = !clipVideo.paused;
-    if (clipVideo.userPaused) clipVideo.pause(); else clipVideo.play().catch(() => {});
+    if (clipVideo.userPaused) clipVideo.pause(); else resumeClip();
     updatePlayState();
   }
   playButton.addEventListener("click", () => (clipState.momentIndex >= 0 ? leaveMoment(true) : togglePlay()));
@@ -463,6 +517,7 @@
     readout.textContent = `Loading frame ${m.frame}…`;
     $("#moment-nav").hidden = false;
     $("#clip-labels").classList.add("moment");
+    updateComparison();
     rotateCue.hidden = true;
     playButton.textContent = "Play";
     moment.wanted = true;
@@ -494,7 +549,8 @@
     $("#moment-status").hidden = true;
     $("#moment-nav").hidden = true;
     $("#clip-labels").classList.remove("moment");
-    if (resume) { clipVideo.userPaused = false; clipVideo.play().catch(() => {}); }
+    updateComparison();
+    if (resume) resumeClip();
     updatePlayState();
   }
   $("#moment-prev").addEventListener("click", () => enterMoment(clipState.momentIndex - 1));
@@ -558,6 +614,27 @@
   });
   showClip(D.clips4d[0]);
 
+  // The opening examples lead directly to the saved answer; video playback remains an explicit choice.
+  for (const button of document.querySelectorAll(".hook-try")) {
+    button.addEventListener("click", () => {
+      if (button.dataset.subject) {
+        const index = D.viewer3d.findIndex((item) => item.id === button.dataset.subject);
+        if (index < 0) return;
+        if (index === ex.index && explorer.item && !explorer.loading) {
+          choose(explorer.item.prompts.find((prompt) => prompt.id === button.dataset.prompt) || null, button.dataset.prompt);
+        } else {
+          showAvatar(index, { promptId: button.dataset.prompt });
+        }
+        revealResult($("#viewer .viewer-stage"), true);
+      } else {
+        const clip = D.clips4d.find((item) => item.id === button.dataset.clip);
+        if (!clip) return;
+        showClip(clip);
+        revealResult(clipStage, true);
+      }
+    });
+  }
+
   /* ------------------------------------------------------------ teaser */
   const hero = $("#hero");
   playWhileVisible($("#teaser"), hero);
@@ -606,12 +683,11 @@
     if (!step) return spotlightBox.replaceChildren();
     const boxes = step.dataset.box.split(" ").map((box) => box.split(",").map(Number));
     const rect = ([x, y, width, height], attrs) => svg("rect", { x, y, width, height, rx: 0.6, ...attrs });
-    const tone = getComputedStyle(step).getPropertyValue("--tone").trim();
     spotlightBox.replaceChildren(svg("svg", { viewBox: "0 0 100 100", preserveAspectRatio: "none", "aria-hidden": "true" },
       svg("mask", { id: "spotlight-holes" }, rect([0, 0, 100, 100], { rx: 0, fill: "white" }),
         ...boxes.map((box) => rect(box, { fill: "black" }))),
       rect([0, 0, 100, 100], { rx: 0, class: "dim", mask: "url(#spotlight-holes)" }),
-      ...boxes.map((box) => rect(box, { class: "ring", style: `stroke:${tone}`, "vector-effect": "non-scaling-stroke" }))));
+      ...boxes.map((box) => rect(box, { class: "ring", "vector-effect": "non-scaling-stroke" }))));
   }
   for (const step of steps) {
     step.addEventListener("pointerenter", () => spotlight(step));

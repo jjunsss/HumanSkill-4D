@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HumanSkill-4D</title>
-  <meta name="description" content="HumanSkill-4D lets an off-the-shelf MLLM select a human avatar's Gaussians from a natural-language query: body parts, garments, and the moments a motion happens. No training.">
+  <meta name="description" content="Select parts and garments of animatable Gaussian avatars, and the moments a motion happens, using natural language. HumanSkill-4D requires no task-specific training.">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0a0c11">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='9' fill='%23d81b60'/%3E%3C/svg%3E">
@@ -42,11 +42,13 @@
 
 <!-- The page opens the way the teaser does: a query, and its answer. -->
 <section class="section ask" id="ask">
-  <p class="ask-query"><span class="glass" aria-hidden="true"></span><span id="ask-text">Can you select a human avatar's Gaussians using natural language?</span></p>
+  <p class="ask-query"><span class="glass" aria-hidden="true"></span><span id="ask-text">Can you select an avatar's parts and motions just by asking?</span></p>
   <div class="ask-answer">
-    <p class="ask-yes">Yes!</p>
-    <p>HumanSkill-4D lets an off-the-shelf MLLM select them, with no training.</p>
-    <p>Name a body part, a garment, or a moment in a motion, and the matching Gaussians light up.</p>
+    <p><b>HumanSkill-4D</b> uses an off-the-shelf MLLM to select avatar regions and matching motion intervals. No task-specific training.</p>
+    <div class="ask-examples" role="group" aria-label="Try a spatial or spatiotemporal query">
+      <button type="button" class="hook-try" data-subject="zju377" data-prompt="sunscreen"><span class="hook-kind">Where</span><q>Select all the skin that needs sunscreen.</q></button>
+      <button type="button" class="hook-try" data-clip="squatpants_F20"><span class="hook-kind">Where &times; when</span><q>Highlight the pants whenever the person squats down.</q></button>
+    </div>
   </div>
 </section>
 
@@ -101,11 +103,11 @@
   <p class="note">This shows saved HumanSkill-4D answers on nine ZJU-MoCap avatars.</p>
 </section>
 
-<!-- The 4D explorer mirrors the 3D one: queries beside the stage, and the people who answered the chosen
-     query below it; the first person of a query is its representative. -->
+<!-- The 4D explorer mirrors the 3D one: queries beside the stage, and the people with saved answers for the chosen
+     query appear below when multiple examples are available. -->
 <section class="section explorer" id="when" aria-label="Interactive 4D referring segmentation">
   <h2>4D Referring Segmentation</h2>
-  <p class="intro">This shows the selection only while the motion happens. Pause a clip to turn the avatar at a predicted moment.</p>
+  <p class="intro">Select a garment during a squat, or a hand during an overhead reach. Play the motion or pause to turn a selected moment in 3D.</p>
   <div class="viewer" id="clip-viewer">
     <div class="viewer-body">
       <div class="viewer-stage">
@@ -118,7 +120,6 @@
           <video id="clip" muted loop playsinline preload="none"></video>
           <canvas id="moment-canvas" tabindex="0" hidden aria-label="The avatar at a predicted moment. Drag or use arrow keys to turn; scroll, pinch or use plus and minus to zoom."></canvas>
           <div class="viewer-status" id="moment-status" role="status" hidden></div>
-          <button type="button" class="rotate-cue" id="clip-rotate" hidden>Click to turn this moment in 3D</button>
         </div>
         <div class="clip-bar">
           <div class="timeline" id="timeline" role="slider" aria-label="Clip time" tabindex="0">
@@ -126,6 +127,8 @@
           </div>
           <div class="clip-controls">
             <button type="button" id="clip-play" class="small">Play</button>
+            <button type="button" class="small rotate-cue" id="clip-rotate" hidden>Turn in 3D</button>
+            <button type="button" id="clip-compare" class="small" aria-pressed="false">Compare original</button>
             <span class="frame-readout" id="frame-readout"></span>
             <span class="moment-nav" id="moment-nav" hidden>
               <button type="button" class="small" id="moment-prev" aria-label="Previous moment">&lsaquo;</button>
@@ -167,31 +170,32 @@
 <!-- Each step lights up its panel of the pipeline figure; data-box is that panel as left, top, width, height in %. -->
 <section class="section" id="method">
   <h2>How It Works</h2>
-  <p class="intro">Click a step to see it in the figure.</p>
+  <p class="intro">Semantic memory resolves references to parts and garments, even by appearance or function. Motion memory lets geometric programs find matching moments from joint trajectories.</p>
+  <p class="note">Click a step to follow it in the figure.</p>
   <div class="walk">
     <div class="figure-card" id="pipeline-card">
       <img id="pipeline" class="figure" loading="lazy" alt="HumanSkill-4D pipeline. Offline: semantic memory, operator registry and motion memory. Online: the MLLM reads the user query, selects categories for the spatial mask, and writes a motion program whose temporal mask gives the spatiotemporal selection.">
       <div class="spotlight" id="spotlight" hidden></div>
     </div>
     <div class="walk-steps">
-      <p class="walk-phase">Once per avatar</p>
+      <p class="walk-phase">Before querying</p>
       <ol class="steps" id="steps">
-        <li><button type="button" class="step" data-tone="semantic" data-box="3.6,1.6,42.6,36.8">
-          <b>Label the Gaussians.</b> A human parser labels the captured frames, so every Gaussian gets a score for each category, such as upper clothing. The MLLM describes each category from the images.</button></li>
-        <li><button type="button" class="step" data-tone="registry" data-box="46.9,1.6,24.4,36.8">
-          <b>Write down motion words.</b> An operator registry lists 20 states (such as horizontal or bent) and 26 changes (such as move up or move outward) as text the MLLM can read.</button></li>
-        <li><button type="button" class="step" data-tone="motion" data-box="72,1.6,27.4,36.8">
-          <b>Keep the motion.</b> The avatar's joint and root trajectories over the clip.</button></li>
+        <li><button type="button" class="step" data-box="3.6,1.6,42.6,36.8">
+          <b>Build semantic memory.</b> A human parser links body and garment categories to Gaussian regions. The MLLM adds appearance descriptions, so queries can refer to how a region looks or what it is used for.</button></li>
+        <li><button type="button" class="step" data-box="46.9,1.6,24.4,36.8">
+          <b>Define motion operators.</b> A shared registry describes geometric states and changes, such as a bent knee or an upward-moving hand, in language the MLLM can use.</button></li>
+        <li><button type="button" class="step" data-box="72,1.6,27.4,36.8">
+          <b>Store motion memory.</b> Keep joint and root trajectories for each motion sequence, so timing can be checked in 3D.</button></li>
       </ol>
       <p class="walk-phase">For every query</p>
       <ol class="steps" id="steps-online" start="4">
-        <li><button type="button" class="step" data-tone="mllm" data-box="6.2,46.4,53.9,21">
+        <li><button type="button" class="step" data-box="6.2,46.4,53.9,21">
           <b>Ask in plain words.</b> The MLLM reads the query together with the category names, their descriptions and the motion words.</button></li>
-        <li><button type="button" class="step" data-tone="where" data-box="3.6,70.8,27.4,28">
-          <b>Where.</b> It picks the categories the query names. Every Gaussian scoring at least 0.4 on them is selected.</button></li>
-        <li><button type="button" class="step" data-tone="when" data-box="61.8,50.6,35.2,16.6 71.4,70.8,28,28">
-          <b>When (4D only).</b> It writes a motion program from the motion words. A deterministic executor runs it on the joint trajectories and returns the frames.</button></li>
-        <li><button type="button" class="step" data-tone="both" data-box="33.4,70.8,35.8,28">
+        <li><button type="button" class="step" data-box="3.6,70.8,27.4,28">
+          <b>Where.</b> It resolves direct or indirect descriptions to parts and garments, then selects their Gaussian regions.</button></li>
+        <li><button type="button" class="step" data-box="61.8,50.6,35.2,16.6 71.4,70.8,28,28">
+          <b>When (4D only).</b> It composes geometric operators into a motion program. A deterministic executor runs it on motion memory to find matching intervals.</button></li>
+        <li><button type="button" class="step" data-box="33.4,70.8,35.8,28">
           <b>Where &times; when.</b> The selected Gaussians are highlighted only in those frames.</button></li>
       </ol>
     </div>
