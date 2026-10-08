@@ -24,19 +24,17 @@
     <span class="author" data-aff="2">Dongyoon Han<sup>2,&dagger;</sup></span>
     <span class="author" data-aff="1">Seungryul Baek<sup>1,&dagger;</sup></span>
   </p>
-  <!-- Each affiliation selects its authors, the way a query selects an avatar's parts. The logos sit beside the
-       affiliations (static/logos: UNIST wordmark and NAVER logotype from Wikimedia Commons), on white tiles. -->
-  <div class="affiliation-line">
-    <p class="affiliations">
-      <button type="button" class="affiliation" data-aff="1" title="Select the authors from UNIST."><sup>1</sup>UNIST</button>
-      <button type="button" class="affiliation" data-aff="2" title="Select the authors from NAVER AI Lab."><sup>2</sup>NAVER AI Lab</button>
-      <span><sup>&dagger;</sup>Corresponding authors</span>
-    </p>
-    <p class="aff-logos">
-      <img src="static/logos/unist.svg" alt="UNIST">
-      <img src="static/logos/naver.svg" alt="NAVER">
-    </p>
-  </div>
+  <!-- Each affiliation selects its authors, the way a query selects an avatar's parts. Below them, the logos
+       (static/logos: UNIST wordmark and NAVER logotype from Wikimedia Commons) in white on the dark page. -->
+  <p class="affiliations">
+    <button type="button" class="affiliation" data-aff="1" title="Select the authors from UNIST."><sup>1</sup>UNIST</button>
+    <button type="button" class="affiliation" data-aff="2" title="Select the authors from NAVER AI Lab."><sup>2</sup>NAVER AI Lab</button>
+    <span><sup>&dagger;</sup>Corresponding authors</span>
+  </p>
+  <p class="aff-logos">
+    <img src="static/logos/unist.svg" alt="UNIST">
+    <img src="static/logos/naver.svg" alt="NAVER">
+  </p>
   <!-- The link targets below are not yet public. -->
   <nav class="links" aria-label="Paper resources">
     <a class="button placeholder" href="#" data-pending="paper">Paper (TODO)</a>
@@ -65,7 +63,8 @@
 
 <hr class="section-rule">
 <section class="section explorer" id="where" aria-label="Interactive 3D referring segmentation">
-  <h2>3D Referring Segmentation</h2>
+  <p class="kicker kicker-where">Where</p>
+  <h2 class="section-title">3D Referring Segmentation</h2>
   <p class="intro">Select parts or garments on an avatar, named directly or by appearance, function, or task. Drag to check the selection from any side.</p>
   <div class="viewer" id="viewer">
     <div class="viewer-body">
@@ -121,7 +120,8 @@
      query appear below when multiple examples are available. -->
 <hr class="section-rule">
 <section class="section explorer" id="when" aria-label="Interactive 4D referring segmentation">
-  <h2>4D Referring Segmentation</h2>
+  <p class="kicker kicker-when">Where &times; when</p>
+  <h2 class="section-title">4D Referring Segmentation</h2>
   <p class="intro">Select parts or garments during a motion. Switch the camera to check the selection from other sides.</p>
   <div class="viewer" id="clip-viewer">
     <div class="viewer-body">
@@ -164,7 +164,8 @@
 
 <hr class="section-rule">
 <section class="section" id="compare-methods">
-  <h2>Comparison with Prior Methods</h2>
+  <p class="kicker">Benchmark</p>
+  <h2 class="section-title">Comparison with Prior Methods</h2>
   <p class="intro">This shows each method's saved predictions on benchmark queries.</p>
   <div class="tabs" id="compare-tabs" role="tablist" aria-label="Benchmark queries"></div>
   <video id="comparison" class="frame bordered" muted playsinline controls preload="none"></video>
@@ -174,7 +175,8 @@
 <!-- Each step lights up its panel of the pipeline figure; data-box is that panel as left, top, width, height in %. -->
 <hr class="section-rule">
 <section class="section" id="method">
-  <h2>How It Works</h2>
+  <p class="kicker">Method</p>
+  <h2 class="section-title">How It Works</h2>
   <p class="intro">Semantic memory resolves references to parts and garments, even by appearance or function. Motion memory lets geometric programs find matching moments from joint trajectories.</p>
   <p class="note">Click a step to follow it in the figure.</p>
   <div class="walk">

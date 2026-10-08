@@ -64,8 +64,14 @@ em { font-style: italic; }
 /* a rule between the titled sections, one width for all of them */
 .section-rule { width: calc(100% - 32px); max-width: 1128px; margin: 56px auto 0; border: 0; border-top: 1px solid var(--line); }
 .section-rule + .section { padding-top: 44px; }
-#hero { display: block; width: min(100%, max(520px, calc((100svh - 460px) * 16 / 9))); margin: 0 auto; aspect-ratio: 16 / 9; }
+#hero { display: block; width: min(100%, max(520px, calc((100svh - 500px) * 16 / 9))); margin: 0 auto; aspect-ratio: 16 / 9; }
 h2 { margin: 0 0 16px; font-size: 30px; font-weight: 500; text-align: center; }
+/* section titles stand out: a larger, bolder title under a short label in the colour of what the section shows
+   (pink for the selection, green for the moment in time) */
+.section-title { margin-bottom: 14px; font-size: clamp(30px, 3.6vw, 42px); font-weight: 600; letter-spacing: -.01em; }
+.kicker { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; text-align: center; color: var(--muted); }
+.kicker-where { color: var(--select-text); }
+.kicker-when { color: var(--interval); }
 h3 { margin: 0 0 6px; font-size: 18px; font-weight: 500; }
 .intro { max-width: 800px; margin: 0 auto 20px; text-align: center; }
 .caption { margin: 12px auto 0; max-width: 820px; text-align: center; font-size: 15px; }
@@ -241,14 +247,12 @@ q { quotes: "\201c" "\201d"; }
 .authors.lit-1 .author[data-aff="1"] { background: var(--unist); color: #fff; box-shadow: 0 0 0 1px var(--unist-text); }
 .authors.lit-2 .author[data-aff="2"] { background: var(--naver); color: var(--page-bg); }
 .authors[class*="lit-"] .author sup { color: inherit; }
-/* the affiliations, with the two logos beside them (below them on a narrow screen) */
-.affiliation-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 22px; margin: 8px 0 0; }
-.affiliations { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 18px; margin: 0; font-size: 15px; color: var(--muted); }
+.affiliations { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 18px; margin: 6px 0 0; font-size: 15px; color: var(--muted); }
 .affiliation { padding: 1px 6px; border: 0; border-radius: 4px; background: none; color: inherit; font-size: 15px; cursor: pointer; }
 .affiliation:hover, .affiliation:focus-visible { color: var(--strong); outline: none; }
-.aff-logos { display: flex; align-items: center; gap: 8px; margin: 0; padding-left: 22px; border-left: 1px solid var(--line); }
-/* logos keep their own colours on a white tile */
-.aff-logos img { height: 26px; width: auto; padding: 5px 9px; border-radius: 6px; background: #fff; }
+/* the logos as one centred row of white marks, which read on the dark page without tiles */
+.aff-logos { display: flex; align-items: center; justify-content: center; gap: 36px; margin: 14px 0 22px; }
+.aff-logos img { height: 20px; width: auto; filter: brightness(0) invert(1); opacity: .72; }
 .affiliation:hover, .affiliation:focus-visible { color: var(--strong); outline: none; }
 
 /* One inline 3D stage; thumbnails never create extra renderers. */
@@ -312,8 +316,8 @@ footer { max-width: var(--page); margin: 64px auto 0; padding: 20px 16px 40px; b
   .authors { margin-top: 14px; gap: 2px 8px; font-size: 16px; }
   .affiliations { gap: 2px 10px; font-size: 13px; }
   .affiliation { font-size: 13px; }
-  .aff-logos { padding-left: 0; border-left: 0; }
-  .aff-logos img { height: 22px; padding: 4px 7px; }
+  .aff-logos { gap: 26px; margin: 12px 0 16px; }
+  .aff-logos img { height: 16px; }
   .links { margin-top: 12px; }
   .ask.section { padding-top: 24px; }
   .ask-query { margin-bottom: 14px; padding: 12px 18px; }
@@ -352,6 +356,7 @@ footer { max-width: var(--page); margin: 64px auto 0; padding: 20px 16px 40px; b
   .figure-card { position: sticky; top: 8px; z-index: 2; padding: 6px; box-shadow: 0 8px 20px var(--shadow); }
   .spotlight { inset: 6px; }
   h2 { font-size: 26px; }
+  .section-title { font-size: 28px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

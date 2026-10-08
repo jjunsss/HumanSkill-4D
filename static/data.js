@@ -2,7 +2,7 @@ window.HS4D = {
  "hero": {
   "full": "media/teaser.mp4",
   "poster": "media/teaser.jpg",
-  "full_seconds": 42.2
+  "full_seconds": 39.86666666666667
  },
  "viewer3d": [
   {
