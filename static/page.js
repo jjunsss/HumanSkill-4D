@@ -423,6 +423,7 @@
     if (!byQuery.has(clip.query)) byQuery.set(clip.query, []);
     byQuery.get(clip.query).push(clip);
   }
+  $("#clip-query-count").textContent = `· ${byQuery.size} queries`;
   const queryButtons = [...byQuery.keys()].map((query) => {
     const button = el("button", { class: "prompt", type: "button", "aria-pressed": "false", text: query });
     button.query = query;

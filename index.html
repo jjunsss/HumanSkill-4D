@@ -107,7 +107,7 @@
      query appear below when multiple examples are available. -->
 <section class="section explorer" id="when" aria-label="Interactive 4D referring segmentation">
   <h2>4D Referring Segmentation</h2>
-  <p class="intro">Select clothing during squats, overhead reaches, high knees or kicks. Play the motion or pause to turn a selected moment in 3D.</p>
+  <p class="intro">Select parts or garments during a motion. Try a query, or pause to turn a matching moment in 3D.</p>
   <div class="viewer" id="clip-viewer">
     <div class="viewer-body">
       <div class="viewer-stage">
@@ -139,7 +139,7 @@
         </div>
       </div>
       <div class="viewer-side">
-        <h3>Try a query</h3>
+        <h3>Try a query <span class="query-count" id="clip-query-count"></span></h3>
         <p class="viewer-intro"><span class="click-cue">Click</span> a query, and the clip shows when it happens.</p>
         <div id="clip-queries" role="group" aria-label="4D example queries"></div>
         <div class="answer" id="clip-answer" aria-live="polite"></div>
@@ -150,6 +150,7 @@
       <div class="subjects" id="clip-people" role="group" aria-labelledby="people-label"></div>
     </div>
   </div>
+  <p class="note">Saved HumanSkill-4D answers from practical queries and the human-annotated benchmark.</p>
 </section>
 
 <section class="section" id="teaser">
