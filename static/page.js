@@ -7,6 +7,7 @@
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const stages = [];
   const videos = [...document.querySelectorAll("video")];
+  const autoResumeVideos = new Set();
   function pauseVideos(except) {
     for (const video of videos) if (video !== except) { video.userPaused = true; video.pause(); }
   }
@@ -20,7 +21,16 @@
     video.addEventListener("pause", () => { for (const stage of stages) stage.update(); });
   }
   document.addEventListener("visibilitychange", () => {
-    if (document.hidden) pauseVideos();
+    if (document.hidden) {
+      for (const video of videos) {
+        if (!autoResumeVideos.has(video)) video.userPaused = true;
+        video.pause();
+      }
+    } else {
+      for (const video of autoResumeVideos) {
+        if (video.wanted && !video.userPaused) video.play().catch(() => {});
+      }
+    }
     for (const stage of stages) stage.update();
   });
 
@@ -38,20 +48,25 @@
 
   /* Run `on` while `target` is on screen and `off` when it leaves. */
   function whileVisible(target, on, off) {
-    new IntersectionObserver(([entry]) => (entry.isIntersecting ? on() : off()), { threshold: 0.15 }).observe(target);
+    new IntersectionObserver(([entry]) => (entry.isIntersecting && entry.intersectionRatio >= 0.15 ? on() : off()), { threshold: 0.15 }).observe(target);
   }
 
   // With preload="none" a new source loads only once play() is called, so play first and seek on metadata.
   function setSource(video, src) {
     if (video.getAttribute("src") !== src) { video.pause(); video.src = src; }
-    if (video.wanted && !video.userPaused) video.play().catch(() => {});
+    if (video.wanted && !document.hidden && !video.userPaused) video.play().catch(() => {});
   }
 
-  function playWhileVisible(target, video) {
+  function playWhileVisible(target, video, autoResume = false) {
+    if (autoResume) autoResumeVideos.add(video);
     whileVisible(target, () => {
       video.wanted = true;
       if (!document.hidden && !video.userPaused) video.play().catch(() => {});
-    }, () => { video.wanted = false; video.userPaused = true; video.pause(); });
+    }, () => {
+      video.wanted = false;
+      if (!autoResume) video.userPaused = true;
+      video.pause();
+    });
   }
 
   /* ------------------------------------------------------------ authors */
@@ -398,11 +413,11 @@
     updateComparison();
   });
   updateComparison();
-  playWhileVisible($("#clip-stage"), clipVideo);
+  playWhileVisible($("#clip-stage"), clipVideo, true);
   whileVisible($("#clip-stage"), () => { moment.visible = true; moment.update(); }, () => { moment.visible = false; moment.update(); });
 
   // Queries sit beside the stage, with the people answering that query below it, as in the 3D explorer.
-  // The first saved answer is the representative; picking it keeps playback paused.
+  // The first saved answer is the representative; it plays when its stage is visible.
   const byQuery = new Map();
   for (const clip of D.clips4d) {
     if (!byQuery.has(clip.query)) byQuery.set(clip.query, []);
@@ -455,9 +470,9 @@
       el("dt", {}, el("span", { class: "swatch" }), "Selected"), el("dd", { text: clip.moments[0].prompts[0].categories.join(", ") }),
       el("dt", {}, "When"), el("dd", { text: intervalCount })));
     clipVideo.poster = clip.poster;
-    clipVideo.userPaused = true;
+    clipVideo.userPaused = reduced;
     setSource(clipVideo, clip.video);
-    readout.textContent = "Saved preview · press Play";
+    readout.textContent = reduced ? "Saved preview · press Play" : "Saved preview";
     playhead.style.left = place(clip, clip.first);
     timeline.setAttribute("aria-valuemin", String(clip.first));
     timeline.setAttribute("aria-valuemax", String(clip.end - 1));
@@ -614,7 +629,7 @@
   });
   showClip(D.clips4d[0]);
 
-  // The opening examples lead directly to the saved answer; video playback remains an explicit choice.
+  // The opening examples lead directly to the saved answer; the 4D clip plays when visible.
   for (const button of document.querySelectorAll(".hook-try")) {
     button.addEventListener("click", () => {
       if (button.dataset.subject) {
