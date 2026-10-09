@@ -85,7 +85,7 @@ h3 { margin: 0 0 6px; font-size: 18px; font-weight: 500; }
 .figure { width: 100%; height: auto; margin: 0 auto; }
 
 /* queries stand out in the heading face, upright and medium weight */
-.answer q, .prompt, .hook-try q {
+.prompt, .hook-try q {
   font-family: "Google Sans", "Noto Sans", sans-serif;
   font-style: normal;
   font-weight: 500;
@@ -118,11 +118,6 @@ q { quotes: "\201c" "\201d"; }
 .tabs .chip:hover { color: var(--strong); }
 .tabs .chip[aria-selected="true"] { border-bottom-color: var(--select-text); background: none; color: var(--strong); }
 
-/* ------------------------------------------------------------ answers */
-.answer { min-width: 0; font-size: 15px; }
-.answer dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 14px; margin: 0; }
-.answer dt { color: var(--muted); }
-.answer dd { margin: 0; color: var(--strong); }
 .swatch { display: inline-block; width: 10px; height: 10px; margin-right: 6px; border-radius: 2px; background: var(--select); vertical-align: 0; }
 
 /* ------------------------------------------------------------ the opening query and its answer */
@@ -197,8 +192,6 @@ q { quotes: "\201c" "\201d"; }
 .small { padding: 3px 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: var(--strong); font-size: 14px; }
 .small:hover { border-color: var(--line-strong); background: var(--panel-2); }
 .small[aria-pressed="true"] { border-color: var(--strong); }
-.frame-readout { min-width: 11em; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
-.frame-readout .live { color: var(--interval); font-weight: 700; }
 /* the camera views, as one segmented control */
 .clip-views { display: inline-flex; }
 .clip-views .small { border-radius: 0; margin-left: -1px; }
@@ -322,8 +315,8 @@ q { quotes: "\201c" "\201d"; }
 .prompt-row .prompt { width: auto; padding: 6px 11px; font-size: 15px; }
 .more-queries { margin-top: 16px; }
 .more-queries summary { cursor: pointer; font-size: 13px; color: var(--muted); }
-#viewer-answer, #clip-answer { margin: 18px 0 0; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; }
-#viewer-answer:empty, #clip-answer:empty { display: none; }
+#viewer-message { margin: 18px 0 0; font-size: 13px; color: var(--muted); }
+#viewer-message:empty { display: none; }
 .subject-picker { padding: 12px 18px 16px; border-top: 1px solid var(--line); }
 .subject-picker > p { margin: 0 0 9px; font-size: 12px; color: var(--muted); }
 .subject-hint { display: none; }
@@ -355,7 +348,7 @@ q { quotes: "\201c" "\201d"; }
   .clip-controls { display: grid; grid-template-columns: auto minmax(0, 1fr); }
   .clip-controls .small { padding: 3px 9px; font-size: 12px; }
   .clip-views { justify-self: end; }
-  .frame-readout { min-width: 0; font-size: 11px; }
+  #clip-compare { grid-column: 1 / -1; justify-self: center; }
   .small, .gallery-modes .small, .overview-toolbar .small, .prompt, .affiliation, .tabs .chip, .more-queries summary { min-height: 44px; }
   .small { min-width: 44px; }
   .more-queries summary { padding: 11px 0; }

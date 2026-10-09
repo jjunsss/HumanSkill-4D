@@ -255,9 +255,7 @@
     for (const button of promptButtons) {
       button.setAttribute("aria-pressed", String(button.prompt === prompt));
     }
-    $("#viewer-answer").replaceChildren(...(prompt ? [el("dl", {},
-      el("dt", {}, el("span", { class: "swatch" }), "Selected"), el("dd", { text: prompt.categories.join(", ") }))] :
-      [el("p", { text: "This query is not available for this avatar. Choose another example." })]));
+    $("#viewer-message").textContent = prompt ? "" : "This query is not available for this avatar. Choose another example.";
     selectionCue.replaceChildren(...(prompt ? [el("span", { class: "swatch" }), el("q", { text: unbroken(prompt.query) })] :
       ["Saved answer unavailable for this avatar. Choose another query."]));
     $("#viewer-original").disabled = !prompt;
@@ -352,7 +350,7 @@
       $("#viewer-status").textContent = "This shared avatar is not available. Choose an avatar below to explore.";
       $("#viewer-prompts").replaceChildren();
       promptButtons.length = 0;
-      $("#viewer-answer").replaceChildren();
+      $("#viewer-message").textContent = "";
       selectionCue.textContent = "Choose an avatar below to explore.";
       for (const id of ["#viewer-original", "#viewer-reset", "#viewer-share"]) $(id).disabled = true;
       subjectButtons.forEach((button) => button.setAttribute("aria-pressed", "false"));
@@ -387,7 +385,6 @@
   const clipVideo = $("#clip");
   const timeline = $("#timeline");
   const playhead = $("#playhead");
-  const readout = $("#frame-readout");
   const playButton = $("#clip-play");
   const compareButton = $("#clip-compare");
   const clipStage = $("#clip-viewer .viewer-stage");
@@ -562,10 +559,6 @@
     peopleButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.clip === clip)));
     $("#clip-title").textContent = clip.person;
     clipSelectionCue.replaceChildren(el("span", { class: "swatch" }), el("q", { text: clip.query }));
-    const intervalCount = `${clip.intervals.length} interval${clip.intervals.length === 1 ? "" : "s"}`;
-    $("#clip-answer").replaceChildren(el("dl", {},
-      el("dt", {}, el("span", { class: "swatch" }), "Selected"), el("dd", { text: clip.categories.join(", ") }),
-      el("dt", {}, "When"), el("dd", { text: intervalCount })));
     listViews(clip);
     viewButtons[0].setAttribute("aria-pressed", "true");
     clipVideo.poster = clip.views[0].poster;
@@ -581,7 +574,6 @@
       clipVideo.addEventListener("loadedmetadata", begin, { once: true });
     } else begin();
     setSource(clipVideo, clip.views[0].video);
-    readout.textContent = reduced ? "Press Play" : "";
     playhead.style.left = place(clip, clip.first);
     timeline.setAttribute("aria-valuemin", String(clip.first));
     timeline.setAttribute("aria-valuemax", String(clip.end - 1));
@@ -612,7 +604,7 @@
   playButton.addEventListener("click", togglePlay);
   clipVideo.addEventListener("click", togglePlay);
 
-  // The playhead and readout follow the clip only while it shows and only when its frame changes.
+  // The playhead and accessible slider value follow the visible clip only when its frame changes.
   let shownFrame = null, followRequest = null;
   const videoFrames = typeof clipVideo.requestVideoFrameCallback === "function";
   function follow() {
@@ -623,7 +615,6 @@
     shownFrame = `${clip.id}:${current}`;
     const live = clip.intervals.some(([a, b]) => a <= current && current <= b);
     playhead.style.left = place(clip, current);
-    readout.replaceChildren(`frame ${current}`, live ? el("span", { class: "live", text: " · selected" }) : "");
     timeline.setAttribute("aria-valuenow", String(current));
     timeline.setAttribute("aria-valuetext", `Frame ${current}${live ? ", selected" : ""}`);
   }
