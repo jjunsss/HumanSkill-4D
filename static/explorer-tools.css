@@ -23,8 +23,8 @@ body.viewer-expanded-open { overflow: hidden; }
 .expanded-heading p { margin: 0; font-size: 14px; color: var(--muted); }
 .expanded-heading .small { font-size: 13px; }
 .viewer-expanded .viewer { flex-shrink: 0; }
-/* The dialog heading names the view and the toolbar gives the drag hint, so the stage's own hint goes. */
-.viewer-expanded #viewer-expand, .viewer-expanded #viewer-kind { display: none; }
+/* the expanded view needs no Expand button */
+.viewer-expanded #viewer-expand { display: none; }
 .viewer-expanded .subjects { display: flex; justify-content: center; overflow-x: auto; }
 .viewer-expanded .subject { flex: 0 0 60px; }
 

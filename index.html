@@ -65,12 +65,10 @@
 <section class="section explorer" id="where" aria-label="Interactive 3D referring segmentation">
   <p class="kicker kicker-where">Where</p>
   <h2 class="section-title">3D Referring Segmentation</h2>
-  <p class="intro">Select parts or garments on an avatar, named directly or by appearance, function, or task. Drag to check the selection from any side.</p>
   <div class="viewer" id="viewer">
     <div class="viewer-body">
       <div class="viewer-stage">
         <div class="viewer-head">
-          <span class="eyebrow" id="viewer-kind">Drag to explore in 3D</span>
           <h2 id="viewer-title">ZJU-MoCap 377</h2>
           <button type="button" class="small" id="viewer-expand" aria-haspopup="dialog">Expand</button>
         </div>
@@ -97,7 +95,7 @@
       </div>
       <div class="viewer-side">
         <h3>Try a query</h3>
-        <p class="viewer-intro"><span class="click-cue">Click</span> a query, and the avatar shows what it selects.</p>
+        <p class="viewer-intro"><span class="click-cue">Click</span> a query.</p>
         <div id="viewer-prompts" role="group" aria-label="Example queries"></div>
         <div class="answer" id="viewer-answer" aria-live="polite"></div>
       </div>
@@ -113,7 +111,6 @@
       <form method="dialog"><button type="submit" class="small" autofocus>Close expanded view</button></form>
     </div>
   </dialog>
-  <p class="note">This shows saved HumanSkill-4D answers on nine ZJU-MoCap avatars.</p>
 </section>
 
 <!-- The 4D explorer mirrors the 3D one: queries beside the stage, and the people with saved answers for the chosen
@@ -122,12 +119,10 @@
 <section class="section explorer" id="when" aria-label="Interactive 4D referring segmentation">
   <p class="kicker kicker-when">Where &times; when</p>
   <h2 class="section-title">4D Referring Segmentation</h2>
-  <p class="intro">Select parts or garments during a motion. Switch the camera to check the selection from other sides.</p>
   <div class="viewer" id="clip-viewer">
     <div class="viewer-body">
       <div class="viewer-stage">
         <div class="viewer-head">
-          <span class="eyebrow">Choose a query and a view.</span>
           <h2 id="clip-title"></h2>
         </div>
         <p class="clip-labels" id="clip-labels"><span>Original</span><span>HumanSkill-4D</span></p>
@@ -148,7 +143,7 @@
       </div>
       <div class="viewer-side">
         <h3>Try a query <span class="query-count" id="clip-query-count"></span></h3>
-        <p class="viewer-intro"><span class="click-cue">Click</span> a query, and the clip shows when it happens.</p>
+        <p class="viewer-intro"><span class="click-cue">Click</span> a query.</p>
         <div id="clip-queries" role="group" aria-label="4D example queries"></div>
         <div class="answer" id="clip-answer" aria-live="polite"></div>
       </div>
@@ -158,7 +153,6 @@
       <div class="subjects" id="clip-people" role="group" aria-labelledby="people-label"></div>
     </div>
   </div>
-  <p class="note">Saved HumanSkill-4D answers from practical queries and the human-annotated benchmark.</p>
 </section>
 
 
@@ -166,10 +160,8 @@
 <section class="section" id="compare-methods">
   <p class="kicker">Benchmark</p>
   <h2 class="section-title">Comparison with Prior Methods</h2>
-  <p class="intro">This shows each method's saved predictions on benchmark queries.</p>
   <div class="tabs" id="compare-tabs" role="tablist" aria-label="Benchmark queries"></div>
   <video id="comparison" class="frame bordered" muted playsinline controls preload="none"></video>
-  <p class="caption" id="comparison-caption"></p>
 </section>
 
 <!-- Each step lights up its panel of the pipeline figure; data-box is that panel as left, top, width, height in %. -->
@@ -177,7 +169,6 @@
 <section class="section" id="method">
   <p class="kicker">Method</p>
   <h2 class="section-title">How It Works</h2>
-  <p class="intro">Semantic memory resolves references to parts and garments, even by appearance or function. Motion memory lets geometric programs find matching moments from joint trajectories.</p>
   <p class="note">Click a step to follow it in the figure.</p>
   <div class="walk">
     <div class="figure-card" id="pipeline-card">

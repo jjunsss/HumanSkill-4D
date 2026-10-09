@@ -643,7 +643,7 @@
   const comparison = $("#comparison");
   playWhileVisible($("#compare-methods"), comparison);
   const compareTabs = D.comparisons.map((item) => {
-    const tab = el("button", { class: "chip", type: "button", role: "tab",
+    const tab = el("button", { class: "chip", type: "button", role: "tab", title: item.query,
       text: `${item.task.startsWith("4D") ? "4D" : "3D"} · ${item.subtype}` });
     tab.addEventListener("click", () => showComparison(item, tab));
     $("#compare-tabs").append(tab);
@@ -653,7 +653,6 @@
     compareTabs.forEach((t) => t.setAttribute("aria-selected", String(t === tab)));
     comparison.poster = item.poster;
     setSource(comparison, item.video);
-    $("#comparison-caption").replaceChildren(el("b", { text: item.subtype }), ` · ${item.task} · `, el("q", { text: item.query }));
   }
   showComparison(D.comparisons[0], compareTabs[0]);
 
