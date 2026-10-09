@@ -17,7 +17,7 @@
 <body>
 
 <header class="masthead">
-  <h1>HumanSkill-4D: Training-Free Language Querying of Animatable Gaussian Avatars in Space and Time</h1>
+  <h1><span class="brand">HumanSkill-4D</span>: Training-Free Language Querying of Animatable Gaussian Avatars in Space and Time</h1>
   <p class="authors" id="authors">
     <span class="author" data-aff="1">Junsu Kim<sup>1</sup></span>
     <span class="author" data-aff="1">Naeun Kim<sup>1</sup></span>
@@ -53,7 +53,7 @@
 <section class="section ask" id="ask">
   <p class="ask-query"><span class="glass" aria-hidden="true"></span><span id="ask-text">Can you select an avatar's parts and motions just by asking?</span></p>
   <div class="ask-answer">
-    <p><b>HumanSkill-4D</b> uses an off-the-shelf MLLM to select avatar regions and matching motion intervals. No training.</p>
+    <p><b class="brand">HumanSkill-4D</b> uses an off-the-shelf MLLM to select avatar regions and matching motion intervals. No training.</p>
     <div class="ask-examples" role="group" aria-label="Try a spatial or spatiotemporal query">
       <button type="button" class="hook-try" data-subject="zju377" data-prompt="sunscreen"><span class="hook-kind">Where</span><q>Select all the skin that needs sunscreen.</q></button>
       <button type="button" class="hook-try" data-clip="reachoutfit_Z13"><span class="hook-kind">Where &times; when</span><q>Highlight the striped top whenever both hands are above the head.</q></button>
@@ -184,26 +184,28 @@
       <img id="pipeline" class="figure" loading="lazy" alt="HumanSkill-4D pipeline. Offline: semantic memory, operator registry and motion memory. Online: the MLLM reads the user query, selects categories for the spatial mask, and writes a motion program whose temporal mask gives the spatiotemporal selection.">
       <div class="spotlight" id="spotlight" hidden></div>
     </div>
+    <!-- The steps read left to right in two rows, as the figure's offline and online bands do; the first row's
+         columns follow the widths of the figure's three panels above them. -->
     <div class="walk-steps">
       <p class="walk-phase">Before querying</p>
-      <ol class="steps" id="steps">
+      <ol class="steps steps-offline" id="steps">
         <li><button type="button" class="step" data-box="3.6,1.6,42.6,36.8">
-          <b>Build semantic memory.</b> A human parser links body and garment categories to Gaussian regions. The MLLM adds appearance descriptions, so queries can refer to how a region looks or what it is used for.</button></li>
+          <b>Semantic memory</b>A parser labels each Gaussian by body part and garment; the MLLM describes how each looks.</button></li>
         <li><button type="button" class="step" data-box="46.9,1.6,24.4,36.8">
-          <b>Define motion operators.</b> A shared registry describes geometric states and changes, such as a bent knee or an upward-moving hand, in language the MLLM can use.</button></li>
+          <b>Motion operators</b>A registry of geometric states and changes, like a bent knee or a rising hand.</button></li>
         <li><button type="button" class="step" data-box="72,1.6,27.4,36.8">
-          <b>Store motion memory.</b> Keep joint and root trajectories for each motion sequence, so the moments of a motion can be found in 3D.</button></li>
+          <b>Motion memory</b>The joint and root trajectories of each motion.</button></li>
       </ol>
       <p class="walk-phase">For every query</p>
-      <ol class="steps" id="steps-online" start="4">
+      <ol class="steps steps-online" id="steps-online" start="4">
         <li><button type="button" class="step" data-box="6.2,46.4,53.9,21">
-          <b>Ask in plain words.</b> The MLLM reads the query together with the category names, their descriptions and the motion words.</button></li>
+          <b>Ask in plain words</b>The MLLM reads the query with the category descriptions and motion words.</button></li>
         <li><button type="button" class="step" data-box="3.6,70.8,27.4,28">
-          <b>Where.</b> It resolves direct or indirect descriptions to parts and garments, then selects their Gaussian regions.</button></li>
+          <b>Where</b>It picks the parts and garments the query means and selects their Gaussians.</button></li>
         <li><button type="button" class="step" data-box="61.8,50.6,35.2,16.6 71.4,70.8,28,28">
-          <b>When (4D only).</b> It composes geometric operators into a motion program. A deterministic executor runs it on motion memory to find matching intervals.</button></li>
+          <b>When (4D)</b>It writes a motion program; an executor finds the matching frames.</button></li>
         <li><button type="button" class="step" data-box="33.4,70.8,35.8,28">
-          <b>Where &times; when.</b> The selected Gaussians are highlighted only in those frames.</button></li>
+          <b>Where &times; when</b>The selected Gaussians light up only in those frames.</button></li>
       </ol>
     </div>
   </div>
