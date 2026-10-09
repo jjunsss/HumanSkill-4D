@@ -59,6 +59,7 @@ em { font-style: italic; }
 .button:disabled { background: var(--panel-2); color: var(--muted); border-color: var(--line); opacity: 1; }
 
 /* ------------------------------------------------------------ sections */
+main { padding-bottom: 56px; }
 .section { max-width: var(--page); margin: 0 auto; padding: 56px 16px 0; }
 /* the teaser leaves room for the question below it on the first screen */
 #teaser { max-width: 1160px; padding-top: 22px; }
@@ -333,8 +334,6 @@ q { quotes: "\201c" "\201d"; }
 .subject-preview { display: block; width: 100%; aspect-ratio: 1; background-size: 300% 300%; background-repeat: no-repeat; }
 .subject-label { display: block; padding: 2px 4px 3px; font-size: 11px; color: var(--muted); }
 .subject[aria-pressed="true"] .subject-label { color: var(--select-text); }
-
-footer { max-width: var(--page); margin: 64px auto 0; padding: 20px 16px 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; text-align: center; }
 
 @media (max-width: 860px), (pointer: coarse) {
   .masthead { padding-top: 24px; }
