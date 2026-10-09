@@ -50,22 +50,22 @@
        transform="matrix(0.35277777,0,0,-0.35277777,-11.416459,312.48253)">
       <path
          d="m 293.949,395.897 h 12.522 v 33.435 h -12.522 z"
-         style="fill:#182549;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         style="fill:#7d9fe3;fill-opacity:1;fill-rule:nonzero;stroke:none"
          id="path17" />
       <path
          d="M 306.472,445.599 H 293.95 v -12.531 h 12.522 z"
-         style="fill:#182549;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         style="fill:#7d9fe3;fill-opacity:1;fill-rule:nonzero;stroke:none"
          id="path19" />
       <path
          d="m 386.376,433.071 h 12.527 v 12.508 h -12.527 z"
-         style="fill:#182549;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         style="fill:#7d9fe3;fill-opacity:1;fill-rule:nonzero;stroke:none"
          id="path21" />
       <g
          id="g23"
          transform="translate(330.2764,433.0649)">
         <path
            d="m 0,0 h 44.879 v 12.506 h -57.416 v -31.103 h 44.904 v -6.055 H -12.537 V -37.16 H 44.879 V -6.088 H 0 Z"
-           style="fill:#182549;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="fill:#7d9fe3;fill-opacity:1;fill-rule:nonzero;stroke:none"
            id="path25" />
       </g>
       <g
@@ -73,7 +73,7 @@
          transform="translate(402.6904,445.5786)">
         <path
            d="m 0,0 v -49.681 h 12.52 v 37.167 H 41.063 V 0 Z"
-           style="fill:#182549;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="fill:#7d9fe3;fill-opacity:1;fill-rule:nonzero;stroke:none"
            id="path29" />
       </g>
       <g
@@ -81,7 +81,7 @@
          transform="translate(223.0405,395.8877)">
         <path
            d="M 0,0 H 12.531 V 37.18 H 43.369 V 49.691 H 0 Z"
-           style="fill:#182549;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="fill:#7d9fe3;fill-opacity:1;fill-rule:nonzero;stroke:none"
            id="path33" />
       </g>
       <g
@@ -89,7 +89,7 @@
          transform="translate(270.1675,445.5981)">
         <path
            d="M 0,0 V -49.701 H 12.516 V -6.828 L 5.695,0 Z"
-           style="fill:#182549;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="fill:#7d9fe3;fill-opacity:1;fill-rule:nonzero;stroke:none"
            id="path37" />
       </g>
       <g
@@ -97,7 +97,7 @@
          transform="translate(199.2427,408.4131)">
         <path
            d="M 0,0 H -30.834 V -12.508 H 12.55 V 37.186 H 0 Z"
-           style="fill:#182549;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="fill:#7d9fe3;fill-opacity:1;fill-rule:nonzero;stroke:none"
            id="path41" />
       </g>
       <g
@@ -105,7 +105,7 @@
          transform="translate(152.1372,402.7139)">
         <path
            d="m 0,0 6.831,-6.826 h 5.676 V 42.876 H 0 Z"
-           style="fill:#182549;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="fill:#7d9fe3;fill-opacity:1;fill-rule:nonzero;stroke:none"
            id="path45" />
       </g>
     </g>

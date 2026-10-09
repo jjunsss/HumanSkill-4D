@@ -258,9 +258,9 @@ q { quotes: "\201c" "\201d"; }
 .affiliations { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 18px; margin: 6px 0 0; font-size: 15px; color: var(--muted); }
 .affiliation { padding: 1px 6px; border: 0; border-radius: 4px; background: none; color: inherit; font-size: 15px; cursor: pointer; }
 .affiliation:hover, .affiliation:focus-visible { color: var(--strong); outline: none; }
-/* the logos as one centred row of white marks, which read on the dark page without tiles */
+/* the logos as one centred row in their brand colours, without tiles */
 .aff-logos { display: flex; align-items: center; justify-content: center; gap: 36px; margin: 14px 0 22px; }
-.aff-logos img { height: 20px; width: auto; filter: brightness(0) invert(1); opacity: .72; }
+.aff-logos img { height: 20px; width: auto; }
 .affiliation:hover, .affiliation:focus-visible { color: var(--strong); outline: none; }
 
 /* One inline 3D stage; thumbnails never create extra renderers. */
