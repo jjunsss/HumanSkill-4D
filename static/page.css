@@ -274,7 +274,7 @@ q { quotes: "\201c" "\201d"; }
 .authors.lit-1 .author[data-aff="1"] { background: var(--unist); color: #fff; box-shadow: 0 0 0 1px var(--unist-text); }
 .authors.lit-2 .author[data-aff="2"] { background: var(--naver); color: var(--page-bg); }
 .authors[class*="lit-"] .author sup { color: inherit; }
-.affiliations { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 18px; margin: 6px 0 0; font-size: 15px; color: var(--muted); }
+.affiliations { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 2px 18px; margin: 6px 0 0; font-size: 15px; color: var(--muted); }
 .affiliation { padding: 1px 6px; border: 0; border-radius: 4px; background: none; color: inherit; font-size: 15px; cursor: pointer; }
 .affiliation:hover, .affiliation:focus-visible { color: var(--strong); }
 /* the logos as one centred row in their brand colours, without tiles */
