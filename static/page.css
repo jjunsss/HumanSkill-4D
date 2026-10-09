@@ -161,8 +161,26 @@ q { quotes: "\201c" "\201d"; }
 /* a cue that the queries and avatars respond to clicks */
 .click-cue { padding: 1px 7px; border-radius: 999px; background: var(--select); color: #fff; font-weight: 700; font-size: 12px; }
 
-/* The 4D explorer uses the same card as 3D; its saved answer is enlarged by default, and the original
-   stays available for comparison. A paused moment turns in 3D in place. */
+/* One composite video introduces all people; each tile opens the detailed result. */
+.gallery-modes { display: flex; justify-content: center; gap: 6px; margin: 0 0 18px; }
+.gallery-modes .small { min-height: 42px; padding: 7px 20px; border-radius: 999px; }
+.gallery-modes .small[aria-pressed="true"] { background: var(--select); border-color: var(--select); color: #fff; }
+.overview-heading { padding: 16px 20px; }
+.overview-heading p { margin: 0; font-size: 13px; color: var(--muted); }
+.overview-heading p:first-child { margin-bottom: 2px; font-size: 18px; color: var(--strong); }
+.overview-stage { position: relative; aspect-ratio: 1120 / 656; }
+.overview-stage > video { width: 100%; height: 100%; }
+.overview-people { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--overview-columns, 4), minmax(0, 1fr)); grid-template-rows: repeat(var(--overview-rows, 2), minmax(0, 1fr)); }
+.overview-person { position: relative; min-width: 0; padding: 0; border: 1px solid var(--line); background: transparent; text-align: center; }
+.overview-person:hover, .overview-person:focus-visible { z-index: 1; border-color: var(--select-text); box-shadow: inset 0 0 0 1px var(--select-text); outline-offset: -3px; }
+.overview-caption { position: absolute; bottom: 0; left: 0; right: 0; height: 14.63%; display: flex; flex-direction: column; justify-content: center; padding: 0 4px; line-height: 1.3; }
+.overview-caption b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: clamp(11px, 1.2vw, 14px); font-weight: 500; color: var(--strong); }
+.overview-caption small { font-size: clamp(9px, 1vw, 11px); color: var(--muted); }
+.overview-toolbar { display: flex; align-items: center; gap: 14px; min-height: 68px; padding: 12px 16px; border-top: 1px solid var(--line); }
+.overview-toolbar .small { flex: none; min-height: 40px; }
+.overview-toolbar p { margin: 0; font-size: 13px; line-height: 1.45; color: var(--muted); }
+
+/* The detailed 4D explorer enlarges its saved answer; the original stays available for comparison. */
 .clip-labels { display: grid; grid-template-columns: 1fr 1fr; margin: 0 0 4px; font-size: 13px; color: var(--muted); text-align: center; }
 .clip-bar { padding: 4px 14px 12px; border-top: 1px solid var(--line); background: var(--panel); }
 #clip-people .subject-preview { object-fit: cover; }

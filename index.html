@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans:400,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="static/page.css?v=7d008d7daa24">
-  <link rel="stylesheet" href="static/explorer-tools.css?v=7d008d7daa24">
+  <link rel="stylesheet" href="static/page.css?v=e9983ef5b529">
+  <link rel="stylesheet" href="static/explorer-tools.css?v=e9983ef5b529">
 </head>
 <body>
 
@@ -120,11 +120,30 @@
 <section class="section explorer" id="when" aria-label="Interactive 4D referring segmentation">
   <p class="kicker kicker-when">Where &times; when</p>
   <h2 class="section-title">4D Referring Segmentation</h2>
-  <div class="viewer" id="clip-viewer">
+  <div class="gallery-modes" role="group" aria-label="4D gallery display">
+    <button type="button" class="small" id="clip-mode-all" aria-pressed="true" aria-controls="clip-overview">All people</button>
+    <button type="button" class="small" id="clip-mode-single" aria-pressed="false" aria-controls="clip-viewer">One at a time</button>
+  </div>
+  <div class="viewer" id="clip-overview">
+    <div class="overview-heading">
+      <p id="overview-count"></p>
+      <p>Different queries, different moments. Select a person to explore their result.</p>
+    </div>
+    <div class="overview-stage" id="overview-stage">
+      <video id="overview-video" muted loop playsinline preload="none" aria-label="Eight people with their saved 4D query results"></video>
+      <div class="overview-people" id="overview-people" role="group" aria-label="Choose a person to explore"></div>
+    </div>
+    <div class="overview-toolbar">
+      <button type="button" class="small" id="overview-play">Play all</button>
+      <p id="overview-query" aria-live="polite">Select a person to see the full query, timeline and camera views.</p>
+    </div>
+  </div>
+  <div class="viewer" id="clip-viewer" hidden>
     <div class="viewer-body">
       <div class="viewer-stage">
         <div class="viewer-head">
           <h2 id="clip-title"></h2>
+          <button type="button" class="small" id="clip-back">All people</button>
         </div>
         <p class="clip-labels" id="clip-labels"><span>Original</span><span>HumanSkill-4D</span></p>
         <div class="clip-stage" id="clip-stage">
@@ -210,8 +229,8 @@
   <p>Highlighted regions and intervals are rendered from the avatars' Gaussians using saved method outputs.</p>
 </footer>
 
-<script src="static/data.js?v=7d008d7daa24"></script>
-<script src="static/viewer.js?v=7d008d7daa24"></script>
-<script src="static/page.js?v=7d008d7daa24"></script>
+<script src="static/data.js?v=e9983ef5b529"></script>
+<script src="static/viewer.js?v=e9983ef5b529"></script>
+<script src="static/page.js?v=e9983ef5b529"></script>
 </body>
 </html>

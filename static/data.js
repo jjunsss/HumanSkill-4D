@@ -1,7 +1,7 @@
 window.HS4D = {
  "hero": {
-  "full": "media/teaser.mp4?v=7d008d7daa24",
-  "poster": "media/teaser.jpg?v=7d008d7daa24",
+  "full": "media/teaser.mp4?v=e9983ef5b529",
+  "poster": "media/teaser.jpg?v=e9983ef5b529",
   "full_seconds": 39.86666666666667
  },
  "viewer3d": [
@@ -2104,5 +2104,55 @@ window.HS4D = {
    "poster": "media/compare_Q18.jpg?v=f84cf4855386"
   }
  ],
- "pipeline": "media/pipeline.png?v=f84cf4855386"
+ "pipeline": "media/pipeline.png?v=f84cf4855386",
+ "overview4d": {
+  "items": [
+   {
+    "id": "benchmark_F01",
+    "label": "Arms reaching shoulder height"
+   },
+   {
+    "id": "asymmetricpose_Z18",
+    "label": "Different left / right poses"
+   },
+   {
+    "id": "crossbalance_F14",
+    "label": "Hand near the opposite knee"
+   },
+   {
+    "id": "highfoot_Z19",
+    "label": "Foot above the opposite knee"
+   },
+   {
+    "id": "headmotion_F07",
+    "label": "Head tilting backward"
+   },
+   {
+    "id": "grounded_Z17",
+    "label": "Both feet on the floor"
+   },
+   {
+    "id": "crouch_F20",
+    "label": "Both knees deeply bent"
+   },
+   {
+    "id": "forwardlean_F10",
+    "label": "Leaning forward"
+   }
+  ],
+  "seconds": 19,
+  "fps": 24,
+  "wide": {
+   "video": "media/overview_wide.mp4?v=e9983ef5b529",
+   "poster": "media/overview_wide.jpg?v=e9983ef5b529",
+   "columns": 4,
+   "rows": 2
+  },
+  "compact": {
+   "video": "media/overview_compact.mp4?v=e9983ef5b529",
+   "poster": "media/overview_compact.jpg?v=e9983ef5b529",
+   "columns": 2,
+   "rows": 4
+  }
+ }
 };

@@ -408,6 +408,77 @@
   const clipSelectionCue = el("p", { class: "viewer-selection", "aria-hidden": "true" });
   $("#clip-viewer .viewer-head").after(clipSelectionCue);
   const clipState = { clip: null, compareOriginal: false, seekTime: 0 };
+  const overviewVideo = $("#overview-video"), overviewStage = $("#overview-stage");
+  const overviewPlay = $("#overview-play"), compactOverview = window.matchMedia("(max-width: 860px)");
+  let clipMode = "all", overviewSeek = 0;
+  overviewVideo.userPaused = reduced;
+  playWhileVisible(overviewStage, overviewVideo, true);
+  function loadOverview() {
+    const view = D.overview4d[compactOverview.matches ? "compact" : "wide"];
+    overviewStage.style.setProperty("--overview-columns", view.columns);
+    overviewStage.style.setProperty("--overview-rows", view.rows);
+    overviewStage.style.aspectRatio = `${view.columns * 280} / ${view.rows * 328}`;
+    if (overviewVideo.getAttribute("src") === view.video) return;
+    overviewSeek = overviewVideo.readyState >= 1 ? overviewVideo.currentTime : overviewSeek;
+    const time = overviewSeek;
+    overviewVideo.poster = view.poster;
+    overviewVideo.addEventListener("loadedmetadata", () => {
+      if (overviewVideo.getAttribute("src") === view.video) overviewVideo.currentTime = time;
+    }, { once: true });
+    setSource(overviewVideo, view.video);
+    if (overviewVideo.userPaused && overviewVideo.wanted) overviewVideo.load();
+  }
+  function setClipMode(mode) {
+    if (clipMode === mode) return;
+    clipMode = mode;
+    pauseVideos();
+    clipVideo.wanted = overviewVideo.wanted = false;
+    $("#clip-viewer").hidden = mode !== "single";
+    $("#clip-overview").hidden = mode !== "all";
+    $("#clip-mode-all").setAttribute("aria-pressed", String(mode === "all"));
+    $("#clip-mode-single").setAttribute("aria-pressed", String(mode === "single"));
+    if (mode === "all") loadOverview();
+    // Refresh visibility immediately, including switches made before the observer's next callback.
+    const video = mode === "all" ? overviewVideo : clipVideo;
+    const box = (mode === "all" ? overviewStage : $("#clip-stage")).getBoundingClientRect();
+    const visible = Math.max(0, Math.min(box.bottom, innerHeight) - Math.max(box.top, 0)) *
+      Math.max(0, Math.min(box.right, innerWidth) - Math.max(box.left, 0));
+    video.wanted = box.width * box.height > 0 && visible / (box.width * box.height) >= 0.15;
+    if (video.wanted && !video.userPaused && !document.hidden) video.play().catch(() => {});
+  }
+  $("#clip-mode-all").addEventListener("click", () => setClipMode("all"));
+  $("#clip-mode-single").addEventListener("click", () => setClipMode("single"));
+  compactOverview.addEventListener("change", () => { if (clipMode === "all") loadOverview(); });
+  const overviewCards = D.overview4d.items.map((item) => {
+    const clip = D.clips4d.find((candidate) => candidate.id === item.id);
+    const button = el("button", { type: "button", class: "overview-person", title: clip.query,
+      "aria-label": `${clip.person}: ${clip.query} Open detailed result.` },
+      el("span", { class: "overview-caption" }, el("b", { text: item.label }), el("small", { text: clip.person })));
+    button.clip = clip;
+    const describe = () => { $("#overview-query").textContent = clip.query; };
+    button.addEventListener("pointerenter", describe);
+    button.addEventListener("focus", describe);
+    button.addEventListener("click", () => {
+      showClip(clip);
+      $("#clip-back").focus({ preventScroll: true });
+      revealResult(clipStage, true);
+    });
+    return button;
+  });
+  $("#overview-people").replaceChildren(...overviewCards);
+  $("#clip-back").addEventListener("click", () => {
+    setClipMode("all");
+    overviewCards.find((button) => button.clip.person === clipState.clip.person)?.focus({ preventScroll: true });
+    revealResult($("#clip-overview"), true);
+  });
+  function updateOverviewPlay() { overviewPlay.textContent = overviewVideo.paused ? "Play all" : "Pause all"; }
+  for (const type of ["play", "pause"]) overviewVideo.addEventListener(type, updateOverviewPlay);
+  overviewPlay.addEventListener("click", () => {
+    overviewVideo.userPaused = !overviewVideo.paused;
+    if (overviewVideo.userPaused) overviewVideo.pause();
+    else if (!document.hidden) overviewVideo.play().catch(() => {});
+  });
+  loadOverview();
   function updateComparison() {
     for (const id of ["#clip-stage", "#clip-labels"]) $(id).classList.toggle("answer-view", !clipState.compareOriginal);
     compareButton.setAttribute("aria-pressed", String(clipState.compareOriginal));
@@ -428,6 +499,7 @@
     byQuery.get(clip.query).push(clip);
   }
   $("#clip-query-count").textContent = `· ${byQuery.size} queries`;
+  $("#overview-count").textContent = `${overviewCards.length} people · ${byQuery.size} queries to explore`;
   const queryButtons = [...byQuery.keys()].map((query) => {
     const button = el("button", { class: "prompt", type: "button", "aria-pressed": "false", text: unbroken(query) });
     button.query = query;
@@ -485,7 +557,7 @@
     if (clipVideo.userPaused || !clipVideo.wanted) clipVideo.load();
   }
 
-  function showClip(clip) {
+  function showClip(clip, open = true) {
     pauseVideos();
     if (clipState.clip?.query !== clip.query) listPeople(clip.query);
     clipState.clip = clip;
@@ -524,6 +596,7 @@
       timeline.insertBefore(el("div", { class: "interval",
         style: `left:${(100 * (a - clip.first)) / length}%;width:${(100 * (b + 1 - a)) / length}%` }), playhead);
     }
+    if (open) setClipMode("single");
     updatePlayState();
   }
 
@@ -621,7 +694,7 @@
       seekFrame(event.key === "Home" ? clip.first : event.key === "End" ? clip.end - 1 : frameNow(clip) + step);
     }
   });
-  showClip(D.clips4d[0]);
+  showClip(D.clips4d[0], false);
 
   // The opening examples lead directly to the saved answer; the 4D clip plays when visible.
   for (const button of document.querySelectorAll(".hook-try")) {
