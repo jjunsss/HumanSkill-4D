@@ -158,9 +158,6 @@ q { quotes: "\201c" "\201d"; }
 .hook-try[data-clip] .hook-kind { color: var(--interval); }
 .hook-try[data-clip]:hover { border-color: var(--interval); background: rgba(47, 191, 108, .08); }
 
-/* a cue that the queries and avatars respond to clicks */
-.click-cue { padding: 1px 7px; border-radius: 999px; background: var(--select); color: #fff; font-weight: 700; font-size: 12px; }
-
 /* One composite video introduces all people; each tile opens the detailed result. */
 .gallery-modes { display: flex; justify-content: center; gap: 6px; margin: 0 0 18px; }
 .gallery-modes .small { min-height: 42px; padding: 7px 20px; border-radius: 999px; }
