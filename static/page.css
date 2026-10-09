@@ -166,19 +166,34 @@ q { quotes: "\201c" "\201d"; }
 .gallery-modes .small { min-height: 42px; padding: 7px 20px; border-radius: 999px; }
 .gallery-modes .small[aria-pressed="true"] { background: var(--select); border-color: var(--select); color: #fff; }
 .overview-heading { padding: 16px 20px; }
-.overview-heading p { margin: 0; font-size: 13px; color: var(--muted); }
+.overview-heading p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
 .overview-heading p:first-child { margin-bottom: 2px; font-size: 18px; color: var(--strong); }
-.overview-stage { position: relative; aspect-ratio: 1120 / 656; }
+.overview-heading .overview-key { display: flex; flex-wrap: wrap; gap: 4px 24px; margin: 10px 0 6px; color: var(--strong); }
+.key-where, .key-when { margin-right: 5px; font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+.key-where { color: var(--select-text); }
+.key-when { color: var(--interval); }
+.overview-stage { position: relative; aspect-ratio: 1120 / 752; }
 .overview-stage > video { width: 100%; height: 100%; }
 .overview-people { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--overview-columns, 4), minmax(0, 1fr)); grid-template-rows: repeat(var(--overview-rows, 2), minmax(0, 1fr)); }
 .overview-person { position: relative; min-width: 0; padding: 0; border: 1px solid var(--line); background: transparent; text-align: center; }
 .overview-person:hover, .overview-person:focus-visible { z-index: 1; border-color: var(--select-text); box-shadow: inset 0 0 0 1px var(--select-text); outline-offset: -3px; }
-.overview-caption { position: absolute; bottom: 0; left: 0; right: 0; height: 14.63%; display: flex; flex-direction: column; justify-content: center; padding: 0 4px; line-height: 1.3; }
-.overview-caption b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: clamp(11px, 1.2vw, 14px); font-weight: 500; color: var(--strong); }
-.overview-caption small { font-size: clamp(9px, 1vw, 11px); color: var(--muted); }
+.overview-person-name { position: absolute; top: 7px; left: 8px; padding: 2px 5px; border-radius: 3px; background: rgba(16, 19, 26, .8); font-size: 10px; color: var(--muted); }
+.overview-caption { position: absolute; bottom: 0; left: 0; right: 0; height: var(--overview-caption); display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 0 10px; font-size: clamp(11px, 1.1vw, 12px); line-height: 1.35; text-align: left; color: var(--strong); }
+.overview-where { color: var(--select-text); }
+.overview-caption .key-where, .overview-caption .key-when { font-size: 9px; }
 .overview-toolbar { display: flex; align-items: center; gap: 14px; min-height: 68px; padding: 12px 16px; border-top: 1px solid var(--line); }
 .overview-toolbar .small { flex: none; min-height: 40px; }
 .overview-toolbar p { margin: 0; font-size: 13px; line-height: 1.45; color: var(--muted); }
+.overview-query > span { display: block; margin-bottom: 3px; font-size: 11px; color: var(--strong); }
+@media (max-width: 860px) {
+  .overview-caption { font-size: clamp(10px, 2.65vw, 12px); }
+}
+@media (max-width: 400px) {
+  .overview-heading { padding: 14px; }
+  .overview-caption { padding: 0 6px; gap: 3px; font-size: 10px; line-height: 1.3; }
+  .overview-caption .key-where, .overview-caption .key-when { font-size: 8px; }
+  .overview-person-name { top: 4px; left: 4px; font-size: 9px; }
+}
 
 /* The detailed 4D explorer enlarges its saved answer; the original stays available for comparison. */
 .clip-labels { display: grid; grid-template-columns: 1fr 1fr; margin: 0 0 4px; font-size: 13px; color: var(--muted); text-align: center; }

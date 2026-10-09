@@ -1,7 +1,7 @@
 window.HS4D = {
  "hero": {
-  "full": "media/teaser.mp4?v=e9983ef5b529",
-  "poster": "media/teaser.jpg?v=e9983ef5b529",
+  "full": "media/teaser.mp4?v=2c5e84237d15",
+  "poster": "media/teaser.jpg?v=2c5e84237d15",
   "full_seconds": 39.86666666666667
  },
  "viewer3d": [
@@ -2109,50 +2109,54 @@ window.HS4D = {
   "items": [
    {
     "id": "benchmark_F01",
-    "label": "Arms reaching shoulder height"
+    "condition": "Both upper arms lift outward until parallel to the ground"
    },
    {
     "id": "asymmetricpose_Z18",
-    "label": "Different left / right poses"
+    "condition": "Right elbow bent and left elbow straight"
    },
    {
     "id": "crossbalance_F14",
-    "label": "Hand near the opposite knee"
+    "condition": "Left hand near right knee and right knee higher than left knee"
    },
    {
     "id": "highfoot_Z19",
-    "label": "Foot above the opposite knee"
+    "condition": "Right foot higher than left knee"
    },
    {
     "id": "headmotion_F07",
-    "label": "Head tilting backward"
+    "condition": "Head tilts backward"
    },
    {
     "id": "grounded_Z17",
-    "label": "Both feet on the floor"
+    "condition": "Both feet on the floor"
    },
    {
     "id": "crouch_F20",
-    "label": "Both knees deeply bent"
+    "condition": "Both knees deeply bent"
    },
    {
     "id": "forwardlean_F10",
-    "label": "Leaning forward"
+    "condition": "Body leans forward"
    }
   ],
   "seconds": 19,
   "fps": 24,
   "wide": {
-   "video": "media/overview_wide.mp4?v=e9983ef5b529",
-   "poster": "media/overview_wide.jpg?v=e9983ef5b529",
+   "video": "media/overview_wide.mp4?v=2c5e84237d15",
+   "poster": "media/overview_wide.jpg?v=2c5e84237d15",
    "columns": 4,
-   "rows": 2
+   "rows": 2,
+   "tile_width": 280,
+   "tile_height": 376
   },
   "compact": {
-   "video": "media/overview_compact.mp4?v=e9983ef5b529",
-   "poster": "media/overview_compact.jpg?v=e9983ef5b529",
+   "video": "media/overview_compact.mp4?v=2c5e84237d15",
+   "poster": "media/overview_compact.jpg?v=2c5e84237d15",
    "columns": 2,
-   "rows": 4
+   "rows": 4,
+   "tile_width": 280,
+   "tile_height": 408
   }
  }
 };

@@ -417,7 +417,8 @@
     const view = D.overview4d[compactOverview.matches ? "compact" : "wide"];
     overviewStage.style.setProperty("--overview-columns", view.columns);
     overviewStage.style.setProperty("--overview-rows", view.rows);
-    overviewStage.style.aspectRatio = `${view.columns * 280} / ${view.rows * 328}`;
+    overviewStage.style.setProperty("--overview-caption", `${(view.tile_height - view.tile_width) / view.tile_height * 100}%`);
+    overviewStage.style.aspectRatio = `${view.columns * view.tile_width} / ${view.rows * view.tile_height}`;
     if (overviewVideo.getAttribute("src") === view.video) return;
     overviewSeek = overviewVideo.readyState >= 1 ? overviewVideo.currentTime : overviewSeek;
     const time = overviewSeek;
@@ -449,13 +450,22 @@
   $("#clip-mode-all").addEventListener("click", () => setClipMode("all"));
   $("#clip-mode-single").addEventListener("click", () => setClipMode("single"));
   compactOverview.addEventListener("change", () => { if (clipMode === "all") loadOverview(); });
+  function describeOverview(clip) {
+    $("#overview-query-label").textContent = `Full query · ${clip.person}`;
+    $("#overview-query").textContent = clip.query;
+  }
   const overviewCards = D.overview4d.items.map((item) => {
     const clip = D.clips4d.find((candidate) => candidate.id === item.id);
     const button = el("button", { type: "button", class: "overview-person", title: clip.query,
       "aria-label": `${clip.person}: ${clip.query} Open detailed result.` },
-      el("span", { class: "overview-caption" }, el("b", { text: item.label }), el("small", { text: clip.person })));
+      el("span", { class: "overview-person-name", text: clip.person }),
+      el("span", { class: "overview-caption" },
+        el("span", { class: "overview-where" }, el("b", { class: "key-where", text: "WHERE" }),
+          el("span", { text: clip.categories.join(" + ") })),
+        el("span", { class: "overview-when" }, el("b", { class: "key-when", text: "WHEN" }),
+          el("span", { text: item.condition }))));
     button.clip = clip;
-    const describe = () => { $("#overview-query").textContent = clip.query; };
+    const describe = () => describeOverview(clip);
     button.addEventListener("pointerenter", describe);
     button.addEventListener("focus", describe);
     button.addEventListener("click", () => {
@@ -466,6 +476,7 @@
     return button;
   });
   $("#overview-people").replaceChildren(...overviewCards);
+  describeOverview(overviewCards[0].clip);
   $("#clip-back").addEventListener("click", () => {
     setClipMode("all");
     overviewCards.find((button) => button.clip.person === clipState.clip.person)?.focus({ preventScroll: true });

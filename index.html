@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans:400,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="static/page.css?v=e9983ef5b529">
-  <link rel="stylesheet" href="static/explorer-tools.css?v=e9983ef5b529">
+  <link rel="stylesheet" href="static/page.css?v=2c5e84237d15">
+  <link rel="stylesheet" href="static/explorer-tools.css?v=2c5e84237d15">
 </head>
 <body>
 
@@ -127,7 +127,9 @@
   <div class="viewer" id="clip-overview">
     <div class="overview-heading">
       <p id="overview-count"></p>
-      <p>Different queries, different moments. Select a person to explore their result.</p>
+      <p>Each person shows a different query. The clips loop independently.</p>
+      <p class="overview-key"><span><b class="key-where">WHERE</b> Body part or garment</span><span><b class="key-when">WHEN</b> Motion condition</span></p>
+      <p>Pink highlights the selected region during matching moments; it fades away outside them. Select a person for the full query and timeline.</p>
     </div>
     <div class="overview-stage" id="overview-stage">
       <video id="overview-video" muted loop playsinline preload="none" aria-label="Eight people with their saved 4D query results"></video>
@@ -135,7 +137,7 @@
     </div>
     <div class="overview-toolbar">
       <button type="button" class="small" id="overview-play">Play all</button>
-      <p id="overview-query" aria-live="polite">Select a person to see the full query, timeline and camera views.</p>
+      <div class="overview-query" aria-live="polite"><span id="overview-query-label"></span><p id="overview-query"></p></div>
     </div>
   </div>
   <div class="viewer" id="clip-viewer" hidden>
@@ -229,8 +231,8 @@
   <p>Highlighted regions and intervals are rendered from the avatars' Gaussians using saved method outputs.</p>
 </footer>
 
-<script src="static/data.js?v=e9983ef5b529"></script>
-<script src="static/viewer.js?v=e9983ef5b529"></script>
-<script src="static/page.js?v=e9983ef5b529"></script>
+<script src="static/data.js?v=2c5e84237d15"></script>
+<script src="static/viewer.js?v=2c5e84237d15"></script>
+<script src="static/page.js?v=2c5e84237d15"></script>
 </body>
 </html>
