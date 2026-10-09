@@ -693,46 +693,26 @@
   });
   showClip(D.clips4d[0], false);
 
-  // Opening examples and Surprise me share the existing viewers and load only the chosen answer.
-  function openExample(example) {
-    if (example.subject) {
-      const index = D.viewer3d.findIndex((item) => item.id === example.subject);
-      if (index < 0) return;
-      if (index === ex.index && explorer.item && !explorer.loading) {
-        choose(explorer.item.prompts.find((prompt) => prompt.id === example.prompt) || null, example.prompt);
-      } else {
-        showAvatar(index, { promptId: example.prompt });
-      }
-      revealResult($("#viewer .viewer-stage"), true);
-    } else {
-      const clip = D.clips4d.find((item) => item.id === example.clip);
-      if (!clip) return;
-      showClip(clip);
-      revealResult(clipStage, true);
-    }
-  }
+  // The opening examples lead directly to the saved answer; the 4D clip plays when visible.
   for (const button of document.querySelectorAll(".hook-try")) {
-    button.addEventListener("click", () => openExample(button.dataset));
+    button.addEventListener("click", () => {
+      if (button.dataset.subject) {
+        const index = D.viewer3d.findIndex((item) => item.id === button.dataset.subject);
+        if (index < 0) return;
+        if (index === ex.index && explorer.item && !explorer.loading) {
+          choose(explorer.item.prompts.find((prompt) => prompt.id === button.dataset.prompt) || null, button.dataset.prompt);
+        } else {
+          showAvatar(index, { promptId: button.dataset.prompt });
+        }
+        revealResult($("#viewer .viewer-stage"), true);
+      } else {
+        const clip = D.clips4d.find((item) => item.id === button.dataset.clip);
+        if (!clip) return;
+        showClip(clip);
+        revealResult(clipStage, true);
+      }
+    });
   }
-
-  // Use only the practical query groups and clips already selected for the public gallery.
-  const surprise3d = D.viewer3d.flatMap((item) => item.prompts
-    .filter((prompt) => D.promptGroups[prompt.group] === "list")
-    .map((prompt) => ({ subject: item.id, prompt: prompt.id })));
-  let surprise4d = Math.random() < 0.5;
-  const surprise = $("#surprise");
-  surprise.disabled = false;
-  surprise.addEventListener("click", () => {
-    const examples = surprise4d
-      ? D.clips4d.filter((clip) => clip.query !== clipState.clip?.query).map((clip) => ({ clip: clip.id }))
-      : surprise3d.filter((example) => example.subject !== D.viewer3d[ex.index]?.id && example.prompt !== ex.promptId);
-    if (!examples.length) return;
-    const example = examples[Math.floor(Math.random() * examples.length)];
-    openExample(example);
-    // Keyboard navigation continues at the result instead of staying at the bottom of the page.
-    $(example.clip ? "#clip-play" : "#viewer-canvas").focus({ preventScroll: true });
-    surprise4d = !surprise4d;
-  });
 
   /* ------------------------------------------------------------ teaser */
   // The teaser plays muted from the start, pauses offscreen and resumes on return unless the visitor paused it.
