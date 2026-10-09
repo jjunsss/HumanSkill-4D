@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans:400,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="static/page.css?v=df06e1e2356f">
-  <link rel="stylesheet" href="static/explorer-tools.css?v=df06e1e2356f">
+  <link rel="stylesheet" href="static/page.css?v=35ba3f5c1e2b">
+  <link rel="stylesheet" href="static/explorer-tools.css?v=35ba3f5c1e2b">
 </head>
 <body>
 
@@ -193,17 +193,22 @@
 <section class="section" id="method">
   <p class="kicker">Method</p>
   <h2 class="section-title">How It Works</h2>
-  <p class="note">Select a step to highlight it. <a id="pipeline-full" href="media/pipeline.png" target="_blank" rel="noopener" aria-label="Open full-size method figure in a new tab">Open full-size figure ↗</a></p>
+  <p class="note">Choose a step to explore the diagram.</p>
   <div class="walk">
-    <div class="figure-card" id="pipeline-card">
-      <img id="pipeline" class="figure" width="2193" height="1237" loading="lazy" alt="HumanSkill-4D pipeline. Offline: semantic memory, operator registry and motion memory. Online: the MLLM reads the user query, selects categories for the spatial mask, and writes a motion program whose temporal mask gives the spatiotemporal selection.">
-      <div class="spotlight" id="spotlight" hidden></div>
+    <div class="method-visual">
+      <div class="figure-card" id="pipeline-card">
+        <img id="pipeline" class="figure" width="2193" height="1237" loading="lazy" alt="HumanSkill-4D pipeline. Offline: semantic memory, operator registry and motion memory. Online: the MLLM reads the user query, selects categories for the spatial mask, and writes a motion program whose temporal mask gives the spatiotemporal selection.">
+        <div class="spotlight" id="spotlight" hidden></div>
+      </div>
+      <div class="method-tools">
+        <button type="button" class="small" id="method-overview" aria-controls="pipeline-card" disabled>Show full diagram</button>
+        <a id="pipeline-full" href="media/pipeline.png" target="_blank" rel="noopener" aria-label="Open full-size method figure in a new tab">Full size ↗</a>
+      </div>
     </div>
-    <!-- The steps read left to right in two rows, as the figure's offline and online bands do; the first row's
-         columns follow the widths of the figure's three panels above them. -->
+    <!-- The steps follow the figure's offline and online stages. -->
     <div class="walk-steps">
       <p class="walk-phase">Before querying</p>
-      <ol class="steps steps-offline" id="steps">
+      <ol class="steps" id="steps">
         <li><button type="button" class="step" data-box="3.6,1.6,42.6,36.8">
           <b>Semantic memory</b>A parser labels each Gaussian by body part and garment; the MLLM describes how each looks.</button></li>
         <li><button type="button" class="step" data-box="46.9,1.6,24.4,36.8">
@@ -212,7 +217,7 @@
           <b>Motion memory</b>The joint and root trajectories of each motion.</button></li>
       </ol>
       <p class="walk-phase">For every query</p>
-      <ol class="steps steps-online" id="steps-online" start="4">
+      <ol class="steps" id="steps-online" start="4">
         <li><button type="button" class="step" data-box="6.2,46.4,53.9,21">
           <b>Ask in plain words</b>The MLLM reads the query with the category descriptions and motion words.</button></li>
         <li><button type="button" class="step" data-box="3.6,70.8,27.4,28">
@@ -228,8 +233,8 @@
 
 </main>
 
-<script src="static/data.js?v=df06e1e2356f"></script>
-<script src="static/viewer.js?v=df06e1e2356f"></script>
-<script src="static/page.js?v=df06e1e2356f"></script>
+<script src="static/data.js?v=35ba3f5c1e2b"></script>
+<script src="static/viewer.js?v=35ba3f5c1e2b"></script>
+<script src="static/page.js?v=35ba3f5c1e2b"></script>
 </body>
 </html>

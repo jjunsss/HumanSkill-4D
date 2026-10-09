@@ -734,12 +734,12 @@
 
   /* ------------------------------------------------------------ how it works */
   // A step dims the figure except its panels (data-box: left, top, width and height in % of the figure,
-  // one box per panel). Hovering previews a step; clicking pins it, and clicking it again clears it.
+  // one box per panel). Selection changes only on activation; the overview button restores the full figure.
   $("#pipeline").src = D.pipeline;
   $("#pipeline-full").href = D.pipeline;
   const steps = [...document.querySelectorAll(".step")];
   const spotlightBox = $("#spotlight");
-  let pinned = null;
+  const methodOverview = $("#method-overview");
   function svg(tag, attrs, ...children) {
     const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
     for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
@@ -747,7 +747,8 @@
     return node;
   }
   function spotlight(step) {
-    steps.forEach((s) => s.setAttribute("aria-pressed", String(s === pinned)));
+    steps.forEach((s) => s.setAttribute("aria-pressed", String(s === step)));
+    methodOverview.disabled = !step;
     spotlightBox.hidden = !step;
     if (!step) return spotlightBox.replaceChildren();
     const boxes = step.dataset.box.split(" ").map((box) => box.split(",").map(Number));
@@ -759,18 +760,9 @@
       ...boxes.map((box) => rect(box, { class: "ring", "vector-effect": "non-scaling-stroke" }))));
   }
   for (const step of steps) {
-    step.setAttribute("aria-pressed", "false");
-    step.addEventListener("pointerenter", () => spotlight(step));
-    step.addEventListener("pointerleave", () => spotlight(pinned));
-    step.addEventListener("focus", () => spotlight(step));
-    step.addEventListener("blur", () => spotlight(pinned));
-    step.addEventListener("click", () => {
-      pinned = pinned === step ? null : step;
-      spotlight(pinned);
-      // The figure sits above the steps; bring it back when less than half of it shows.
-      const card = $("#pipeline-card").getBoundingClientRect();
-      const shown = Math.min(card.bottom, innerHeight) - Math.max(card.top, 0);
-      if (pinned && shown < card.height / 2) $(".walk").scrollIntoView({ block: "nearest", behavior: reduced ? "auto" : "smooth" });
-    });
+    step.setAttribute("aria-controls", "pipeline-card");
+    step.addEventListener("click", () => spotlight(step));
   }
+  methodOverview.addEventListener("click", () => spotlight(null));
+  spotlight(null);
 })();

@@ -206,29 +206,29 @@ q { quotes: "\201c" "\201d"; }
 /* ------------------------------------------------------------ how it works */
 #method { max-width: 1160px; }
 #method > .note { margin: 0 auto 16px; }
-.walk { display: grid; gap: 18px; }
-/* The figure and its steps share a width scaled to the viewport height. */
-.figure-card, .walk-steps { width: min(100%, max(640px, calc((100svh - 330px) * 1.77 + 20px))); margin: 0 auto; }
-.figure-card { position: relative; padding: 10px; border-radius: 10px; background: var(--card); }
+.walk { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); align-items: start; gap: 24px; }
+.method-visual { position: sticky; top: 16px; min-width: 0; background: var(--page-bg); }
+.figure-card { position: relative; width: 100%; padding: 10px; border-radius: 10px; background: var(--card); }
+.method-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 16px; margin-top: 8px; }
+.method-tools a { display: inline-flex; align-items: center; min-height: 40px; font-size: 13px; }
+.method-tools .small { min-height: 40px; }
+.step, .method-tools .small { -webkit-tap-highlight-color: transparent; }
 .spotlight { position: absolute; inset: 10px; pointer-events: none; }
 .spotlight svg { display: block; width: 100%; height: 100%; }
 .spotlight .dim { fill: rgba(8, 10, 15, .62); }
 .spotlight .ring { fill: none; stroke: var(--select); stroke-width: 3; }
-.walk-steps { display: grid; gap: 6px; }
+.walk-steps { display: grid; gap: 8px; min-width: 0; }
 .walk-phase { margin: 6px 0 0; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-/* steps read left to right, an arrow leading to each; the first row's columns follow the figure's three panels */
-.steps { display: grid; gap: 26px; margin: 0; padding: 0; list-style: none; }
-.steps-offline { grid-template-columns: 43fr 24fr 27fr; }
-.steps-online { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.steps li { position: relative; }
-.steps li + li::before { content: "\2192"; position: absolute; left: -20px; top: 1px; color: var(--muted); font-size: 15px; }
+.steps { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .step {
   position: relative;
   display: block;
   width: 100%;
-  padding: 2px 0 0 34px;
-  border: 0;
-  background: none;
+  min-height: 64px;
+  padding: 12px 12px 12px 46px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
   text-align: left;
   font-size: 14px;
   line-height: 1.5;
@@ -238,8 +238,8 @@ q { quotes: "\201c" "\201d"; }
   counter-increment: step;
   content: counter(step);
   position: absolute;
-  left: 0;
-  top: 0;
+  left: 12px;
+  top: 13px;
   display: grid;
   place-items: center;
   width: 24px;
@@ -252,9 +252,11 @@ q { quotes: "\201c" "\201d"; }
 #steps { counter-reset: step; }
 #steps-online { counter-reset: step 3; }
 .step b { display: block; margin-bottom: 2px; font-size: 15px; color: var(--strong); }
-.step:hover { color: #e6e9ef; }
-.step:hover::before { border-color: var(--select-text); }
-.step[aria-pressed="true"] { color: var(--strong); }
+@media (hover: hover) and (pointer: fine) {
+  .step:hover { color: #e6e9ef; border-color: var(--line-strong); background: var(--panel-2); }
+  .step:hover::before { border-color: var(--select-text); }
+}
+.step[aria-pressed="true"] { color: var(--strong); border-color: var(--select); background: var(--select-soft); }
 .step[aria-pressed="true"] b { color: var(--select-text); }
 .step[aria-pressed="true"]::before { border-color: var(--select); background: var(--select); color: #fff; }
 
@@ -357,8 +359,6 @@ q { quotes: "\201c" "\201d"; }
   .timeline { height: 44px; }
   .timeline .track, .timeline .interval { top: 19px; }
   .timeline .playhead { top: 13px; }
-  .steps-offline, .steps-online { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .steps li + li::before { content: none; }
   .walk-phase:not(:first-child) { margin-top: 12px; }
   .viewer { display: flex; flex-direction: column; }
   .viewer-body { display: contents; }
@@ -385,8 +385,11 @@ q { quotes: "\201c" "\201d"; }
   .viewer-head .small { font-size: 11px; }
   .section { padding-top: 44px; }
   .explorer { padding-top: 20px; }
-  /* the figure stays in view while the steps scroll beneath it */
-  .figure-card { position: sticky; top: 8px; z-index: 2; width: min(100%, calc((50svh - 12px) * 1.77 + 12px)); padding: 6px; box-shadow: 0 8px 20px var(--shadow); }
+  .walk { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  /* Keep the diagram and its controls together, leaving at least half the screen for the steps. */
+  .method-visual { top: 8px; z-index: 2; padding-bottom: 8px; }
+  .figure-card { width: min(100%, calc((50svh - 72px) * 1.77 + 12px)); margin: 0 auto; padding: 6px; }
+  .method-tools .small { min-height: 44px; }
   .spotlight { inset: 6px; }
   h2 { font-size: 26px; }
   .section-title { font-size: 28px; }
