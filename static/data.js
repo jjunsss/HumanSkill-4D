@@ -1668,18 +1668,21 @@ window.HS4D = {
    "views": [
     {
      "camera": "009",
+     "label": "Camera",
      "video": "media/clip_benchmark_F01_c009.mp4",
      "poster": "media/clip_benchmark_F01_c009.jpg"
     },
     {
-     "camera": "003",
-     "video": "media/clip_benchmark_F01_c003.mp4",
-     "poster": "media/clip_benchmark_F01_c003.jpg"
+     "camera": "009_orbit",
+     "label": "Orbit",
+     "video": "media/clip_benchmark_F01_c009_orbit.mp4",
+     "poster": "media/clip_benchmark_F01_c009_orbit.jpg"
     },
     {
-     "camera": "006",
-     "video": "media/clip_benchmark_F01_c006.mp4",
-     "poster": "media/clip_benchmark_F01_c006.jpg"
+     "camera": "009_above",
+     "label": "Above",
+     "video": "media/clip_benchmark_F01_c009_above.mp4",
+     "poster": "media/clip_benchmark_F01_c009_above.jpg"
     }
    ],
    "thumb": "media/thumb_benchmark_F01.jpg"
@@ -1706,59 +1709,24 @@ window.HS4D = {
    "views": [
     {
      "camera": "1",
+     "label": "Camera",
      "video": "media/clip_reachoutfit_Z13_c1.mp4",
      "poster": "media/clip_reachoutfit_Z13_c1.jpg"
     },
     {
-     "camera": "8",
-     "video": "media/clip_reachoutfit_Z13_c8.mp4",
-     "poster": "media/clip_reachoutfit_Z13_c8.jpg"
+     "camera": "1_orbit",
+     "label": "Orbit",
+     "video": "media/clip_reachoutfit_Z13_c1_orbit.mp4",
+     "poster": "media/clip_reachoutfit_Z13_c1_orbit.jpg"
     },
     {
-     "camera": "19",
-     "video": "media/clip_reachoutfit_Z13_c19.mp4",
-     "poster": "media/clip_reachoutfit_Z13_c19.jpg"
+     "camera": "1_above",
+     "label": "Above",
+     "video": "media/clip_reachoutfit_Z13_c1_above.mp4",
+     "poster": "media/clip_reachoutfit_Z13_c1_above.jpg"
     }
    ],
    "thumb": "media/thumb_reachoutfit_Z13.jpg"
-  },
-  {
-   "id": "benchmark_F07",
-   "query": "Select the face and neck while the head tilts backward.",
-   "dataset": "HuMMan",
-   "person": "HuMMan p000571",
-   "clip": "F07",
-   "first": 0,
-   "end": 163,
-   "fps": 30,
-   "intervals": [
-    [
-     51,
-     107
-    ]
-   ],
-   "camera": "009",
-   "categories": [
-    "face neck"
-   ],
-   "views": [
-    {
-     "camera": "009",
-     "video": "media/clip_benchmark_F07_c009.mp4",
-     "poster": "media/clip_benchmark_F07_c009.jpg"
-    },
-    {
-     "camera": "003",
-     "video": "media/clip_benchmark_F07_c003.mp4",
-     "poster": "media/clip_benchmark_F07_c003.jpg"
-    },
-    {
-     "camera": "006",
-     "video": "media/clip_benchmark_F07_c006.mp4",
-     "poster": "media/clip_benchmark_F07_c006.jpg"
-    }
-   ],
-   "thumb": "media/thumb_benchmark_F07.jpg"
   },
   {
    "id": "benchmark_F11",
@@ -1782,18 +1750,21 @@ window.HS4D = {
    "views": [
     {
      "camera": "006",
+     "label": "Camera",
      "video": "media/clip_benchmark_F11_c006.mp4",
      "poster": "media/clip_benchmark_F11_c006.jpg"
     },
     {
-     "camera": "009",
-     "video": "media/clip_benchmark_F11_c009.mp4",
-     "poster": "media/clip_benchmark_F11_c009.jpg"
+     "camera": "006_orbit",
+     "label": "Orbit",
+     "video": "media/clip_benchmark_F11_c006_orbit.mp4",
+     "poster": "media/clip_benchmark_F11_c006_orbit.jpg"
     },
     {
-     "camera": "003",
-     "video": "media/clip_benchmark_F11_c003.mp4",
-     "poster": "media/clip_benchmark_F11_c003.jpg"
+     "camera": "006_above",
+     "label": "Above",
+     "video": "media/clip_benchmark_F11_c006_above.mp4",
+     "poster": "media/clip_benchmark_F11_c006_above.jpg"
     }
    ],
    "thumb": "media/thumb_benchmark_F11.jpg"
@@ -1828,18 +1799,21 @@ window.HS4D = {
    "views": [
     {
      "camera": "20",
+     "label": "Camera",
      "video": "media/clip_benchmark_Z03_c20.mp4",
      "poster": "media/clip_benchmark_Z03_c20.jpg"
     },
     {
-     "camera": "7",
-     "video": "media/clip_benchmark_Z03_c7.mp4",
-     "poster": "media/clip_benchmark_Z03_c7.jpg"
+     "camera": "20_orbit",
+     "label": "Orbit",
+     "video": "media/clip_benchmark_Z03_c20_orbit.mp4",
+     "poster": "media/clip_benchmark_Z03_c20_orbit.jpg"
     },
     {
-     "camera": "13",
-     "video": "media/clip_benchmark_Z03_c13.mp4",
-     "poster": "media/clip_benchmark_Z03_c13.jpg"
+     "camera": "20_above",
+     "label": "Above",
+     "video": "media/clip_benchmark_Z03_c20_above.mp4",
+     "poster": "media/clip_benchmark_Z03_c20_above.jpg"
     }
    ],
    "thumb": "media/thumb_benchmark_Z03.jpg"
@@ -1870,18 +1844,21 @@ window.HS4D = {
    "views": [
     {
      "camera": "8",
+     "label": "Camera",
      "video": "media/clip_benchmark_Z06_c8.mp4",
      "poster": "media/clip_benchmark_Z06_c8.jpg"
     },
     {
-     "camera": "13",
-     "video": "media/clip_benchmark_Z06_c13.mp4",
-     "poster": "media/clip_benchmark_Z06_c13.jpg"
+     "camera": "8_orbit",
+     "label": "Orbit",
+     "video": "media/clip_benchmark_Z06_c8_orbit.mp4",
+     "poster": "media/clip_benchmark_Z06_c8_orbit.jpg"
     },
     {
-     "camera": "1",
-     "video": "media/clip_benchmark_Z06_c1.mp4",
-     "poster": "media/clip_benchmark_Z06_c1.jpg"
+     "camera": "8_above",
+     "label": "Above",
+     "video": "media/clip_benchmark_Z06_c8_above.mp4",
+     "poster": "media/clip_benchmark_Z06_c8_above.jpg"
     }
    ],
    "thumb": "media/thumb_benchmark_Z06.jpg"
@@ -1908,18 +1885,21 @@ window.HS4D = {
    "views": [
     {
      "camera": "8",
+     "label": "Camera",
      "video": "media/clip_benchmark_Z17_c8.mp4",
      "poster": "media/clip_benchmark_Z17_c8.jpg"
     },
     {
-     "camera": "13",
-     "video": "media/clip_benchmark_Z17_c13.mp4",
-     "poster": "media/clip_benchmark_Z17_c13.jpg"
+     "camera": "8_orbit",
+     "label": "Orbit",
+     "video": "media/clip_benchmark_Z17_c8_orbit.mp4",
+     "poster": "media/clip_benchmark_Z17_c8_orbit.jpg"
     },
     {
-     "camera": "1",
-     "video": "media/clip_benchmark_Z17_c1.mp4",
-     "poster": "media/clip_benchmark_Z17_c1.jpg"
+     "camera": "8_above",
+     "label": "Above",
+     "video": "media/clip_benchmark_Z17_c8_above.mp4",
+     "poster": "media/clip_benchmark_Z17_c8_above.jpg"
     }
    ],
    "thumb": "media/thumb_benchmark_Z17.jpg"

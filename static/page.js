@@ -461,12 +461,11 @@
   const frameNow = (clip) => clip.first + Math.min(clip.end - clip.first - 1, Math.floor(clipVideo.currentTime * clip.fps + 1e-3));
   const place = (clip, frame) => `${(100 * (frame - clip.first + 0.5)) / (clip.end - clip.first)}%`;
 
-  // Each clip's answer is rendered from three cameras around the person; a new view keeps the playing time.
+  // Each clip's answer is rendered from its capture camera, a swinging orbit and above; a new view keeps the playing time.
   let viewButtons = [];
   function listViews(clip) {
     viewButtons = clip.views.map((view, index) => {
-      const button = el("button", { type: "button", class: "small", "aria-pressed": "false", text: `View ${index + 1}`,
-        title: `Camera ${view.camera}` });
+      const button = el("button", { type: "button", class: "small", "aria-pressed": "false", text: view.label });
       button.addEventListener("click", () => showView(index));
       return button;
     });
