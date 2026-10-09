@@ -407,7 +407,7 @@
   const clipStage = $("#clip-viewer .viewer-stage");
   const clipSelectionCue = el("p", { class: "viewer-selection", "aria-hidden": "true" });
   $("#clip-viewer .viewer-head").after(clipSelectionCue);
-  const clipState = { clip: null, compareOriginal: false };
+  const clipState = { clip: null, compareOriginal: false, seekTime: 0 };
   function updateComparison() {
     for (const id of ["#clip-stage", "#clip-labels"]) $(id).classList.toggle("answer-view", !clipState.compareOriginal);
     compareButton.setAttribute("aria-pressed", String(clipState.compareOriginal));
@@ -472,11 +472,15 @@
     $("#clip-views").replaceChildren(...viewButtons);
   }
   function showView(index) {
-    const view = clipState.clip.views[index], time = clipVideo.currentTime;
+    const clip = clipState.clip, view = clip.views[index];
+    const time = clipVideo.readyState < 1 ? clipState.seekTime : clipVideo.currentTime;
     viewButtons.forEach((button, i) => button.setAttribute("aria-pressed", String(i === index)));
     if (clipVideo.getAttribute("src") === view.video) return;
     clipVideo.poster = view.poster;
-    clipVideo.addEventListener("loadedmetadata", () => { clipVideo.currentTime = time; }, { once: true });
+    clipState.seekTime = time;
+    clipVideo.addEventListener("loadedmetadata", () => {
+      if (clipState.clip === clip && clipVideo.getAttribute("src") === view.video) clipVideo.currentTime = time;
+    }, { once: true });
     setSource(clipVideo, view.video);
     if (clipVideo.userPaused || !clipVideo.wanted) clipVideo.load();
   }
@@ -497,6 +501,16 @@
     viewButtons[0].setAttribute("aria-pressed", "true");
     clipVideo.poster = clip.views[0].poster;
     clipVideo.userPaused = reduced;
+    // Begin with a short lead-in to the first match, so a new query demonstrates its answer promptly.
+    const source = clip.views[0].video;
+    const start = Math.max(0, seconds(clip, clip.intervals[0][0]) - 0.4);
+    clipState.seekTime = start;
+    const begin = () => {
+      if (clipState.clip === clip && clipVideo.getAttribute("src") === source) clipVideo.currentTime = start;
+    };
+    if (clipVideo.getAttribute("src") !== source || clipVideo.readyState < 1) {
+      clipVideo.addEventListener("loadedmetadata", begin, { once: true });
+    } else begin();
     setSource(clipVideo, clip.views[0].video);
     readout.textContent = reduced ? "Press Play" : "";
     playhead.style.left = place(clip, clip.first);
