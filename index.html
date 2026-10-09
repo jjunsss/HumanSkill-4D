@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans:400,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="static/page.css?v=db8e77ef5073">
-  <link rel="stylesheet" href="static/explorer-tools.css?v=db8e77ef5073">
+  <link rel="stylesheet" href="static/page.css?v=0410d74b37eb">
+  <link rel="stylesheet" href="static/explorer-tools.css?v=0410d74b37eb">
 </head>
 <body>
 
@@ -38,8 +38,8 @@
   </p>
   <!-- The link targets below are not yet public. -->
   <nav class="links" aria-label="Paper resources">
-    <a class="button placeholder" href="#" data-pending="paper">Paper (TODO)</a>
-    <a class="button placeholder" href="#" data-pending="code">Code (TODO)</a>
+    <button type="button" class="button" disabled>Paper (soon)</button>
+    <button type="button" class="button" disabled>Code (soon)</button>
   </nav>
 </header>
 
@@ -52,7 +52,7 @@
 
 <!-- Then a query and its answer, as in the teaser. -->
 <section class="section ask" id="ask">
-  <p class="ask-query"><span class="glass" aria-hidden="true"></span><span id="ask-text">Can you select an avatar's parts and motions just by asking?</span></p>
+  <p class="ask-query">Can you select an avatar's parts and motions just by asking?</p>
   <div class="ask-answer">
     <p><b class="brand">HumanSkill-4D</b> uses an off-the-shelf MLLM to select avatar regions and matching motion intervals. No training.</p>
     <div class="ask-examples" role="group" aria-label="Try a spatial or spatiotemporal query">
@@ -74,11 +74,13 @@
           <button type="button" class="small" id="viewer-expand" aria-haspopup="dialog">Expand</button>
         </div>
         <div class="viewer-viewport" id="viewer-viewport">
-          <canvas id="viewer-canvas" tabindex="0" aria-label="3D avatar. Drag or use arrow keys to turn; scroll, pinch or use plus and minus to zoom; Home resets the view."></canvas>
+          <canvas id="viewer-canvas" tabindex="0" aria-label="3D avatar. Drag sideways or use arrow keys to turn; use plus and minus to zoom. On mobile, swipe vertically to scroll the page; Expand enables full drag and pinch controls. Home resets the view."></canvas>
           <div class="viewer-status" id="viewer-status" role="status">Loading avatar…</div>
         </div>
         <div class="viewer-toolbar">
-          <span>Drag to turn · Scroll or pinch to zoom</span>
+          <span class="gesture-desktop">Drag to turn · Scroll or pinch to zoom</span>
+          <span class="gesture-mobile">Swipe sideways to turn · Swipe up to scroll<br>Expand for full rotation and pinch zoom</span>
+          <span class="gesture-expanded">Drag to turn · Pinch to zoom</span>
           <div>
             <button type="button" class="small" id="viewer-original" aria-pressed="false" disabled>Show original</button>
             <button type="button" class="small" id="viewer-reset" disabled>Reset view</button>
@@ -185,6 +187,7 @@
   <h2 class="section-title">Comparison with Prior Methods</h2>
   <div class="tabs" id="compare-tabs" role="tablist" aria-label="Benchmark queries"></div>
   <video id="comparison" class="frame bordered" muted playsinline controls preload="none"></video>
+  <p class="note comparison-tools"><a id="comparison-full" target="_blank" rel="noopener" aria-label="Open full-size comparison video in a new tab">Open full-size video ↗</a></p>
 </section>
 
 <!-- Each step lights up its panel of the pipeline figure; data-box is that panel as left, top, width, height in %. -->
@@ -192,10 +195,10 @@
 <section class="section" id="method">
   <p class="kicker">Method</p>
   <h2 class="section-title">How It Works</h2>
-  <p class="note">Click a step to follow it in the figure.</p>
+  <p class="note">Select a step to highlight it. <a id="pipeline-full" href="media/pipeline.png" target="_blank" rel="noopener" aria-label="Open full-size method figure in a new tab">Open full-size figure ↗</a></p>
   <div class="walk">
     <div class="figure-card" id="pipeline-card">
-      <img id="pipeline" class="figure" loading="lazy" alt="HumanSkill-4D pipeline. Offline: semantic memory, operator registry and motion memory. Online: the MLLM reads the user query, selects categories for the spatial mask, and writes a motion program whose temporal mask gives the spatiotemporal selection.">
+      <img id="pipeline" class="figure" width="2193" height="1237" loading="lazy" alt="HumanSkill-4D pipeline. Offline: semantic memory, operator registry and motion memory. Online: the MLLM reads the user query, selects categories for the spatial mask, and writes a motion program whose temporal mask gives the spatiotemporal selection.">
       <div class="spotlight" id="spotlight" hidden></div>
     </div>
     <!-- The steps read left to right in two rows, as the figure's offline and online bands do; the first row's
@@ -231,8 +234,8 @@
   <p>Highlighted regions and intervals are rendered from the avatars' Gaussians using saved method outputs.</p>
 </footer>
 
-<script src="static/data.js?v=db8e77ef5073"></script>
-<script src="static/viewer.js?v=db8e77ef5073"></script>
-<script src="static/page.js?v=db8e77ef5073"></script>
+<script src="static/data.js?v=0410d74b37eb"></script>
+<script src="static/viewer.js?v=0410d74b37eb"></script>
+<script src="static/page.js?v=0410d74b37eb"></script>
 </body>
 </html>

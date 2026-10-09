@@ -5,6 +5,7 @@
   const D = window.HS4D;
   const $ = (selector) => document.querySelector(selector);
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const compact = window.matchMedia("(max-width: 860px), (pointer: coarse)");
   const stages = [];
   const videos = [...document.querySelectorAll("video")];
   const autoResumeVideos = new Set();
@@ -86,22 +87,6 @@
     button.addEventListener("pointerleave", off);
     button.addEventListener("focus", on);
     button.addEventListener("blur", off);
-  }
-
-  /* ------------------------------------------------------------ the opening query */
-  // The query is typed, then its answer appears, as in the teaser.
-  if (!reduced) {
-    const text = $("#ask-text"), full = text.textContent, answer = $(".ask-answer");
-    text.textContent = "";
-    answer.classList.add("waiting");
-    $(".ask-query").classList.add("typing");
-    let i = 0;
-    const type = () => {
-      text.textContent = full.slice(0, ++i);
-      if (i < full.length) setTimeout(type, 38);
-      else setTimeout(() => { $(".ask-query").classList.remove("typing"); answer.classList.remove("waiting"); }, 250);
-    };
-    setTimeout(type, 400);
   }
 
   /* ------------------------------------------------------------ 3D stages */
@@ -200,13 +185,14 @@
   const explorer = makeStage($("#viewer-canvas"));
   const ex = { index: 2, prompt: null, promptId: "sunscreen", original: false };
   const promptButtons = [], subjectButtons = [];
+  $("#subject-label").append(el("span", { class: "subject-hint", text: `Swipe to browse all ${D.viewer3d.length} avatars.` }));
   const selectionCue = el("p", { class: "viewer-selection", "aria-hidden": "true" });
   $("#viewer .viewer-head").after(selectionCue);
 
   // After a mobile choice, keep the selected query and its avatar together in view. The same stage
   // lives in the expanded dialog, whose sticky heading has its own scroll margin.
   function revealResult(target, force = false) {
-    if (!force && !window.matchMedia("(max-width: 860px)").matches) return;
+    if (!force && !compact.matches) return;
     const box = target.getBoundingClientRect();
     const inset = target.closest("#viewer-expanded") ? 64 : 8;
     if (box.top < inset || box.bottom > innerHeight - 8) {
@@ -252,7 +238,7 @@
       });
       const layout = (D.promptGroups || {})[group] || "list";
       if (layout === "folded") {
-        const more = el("details", { class: "more-queries" }, el("summary", { text: `More queries: ${group}` }), ...buttons);
+        const more = el("details", { class: "more-queries" }, el("summary", { text: `More queries (${prompts.length})`, title: group }), ...buttons);
         more.open = prompts.some((prompt) => prompt.id === selectedId);
         list.append(more);
       } else {
@@ -409,12 +395,12 @@
   $("#clip-viewer .viewer-head").after(clipSelectionCue);
   const clipState = { clip: null, compareOriginal: false, seekTime: 0 };
   const overviewVideo = $("#overview-video"), overviewStage = $("#overview-stage");
-  const overviewPlay = $("#overview-play"), compactOverview = window.matchMedia("(max-width: 860px)");
+  const overviewPlay = $("#overview-play");
   let clipMode = "all", overviewSeek = 0;
   overviewVideo.userPaused = reduced;
   playWhileVisible(overviewStage, overviewVideo, true);
   function loadOverview() {
-    const view = D.overview4d[compactOverview.matches ? "compact" : "wide"];
+    const view = D.overview4d[compact.matches ? "compact" : "wide"];
     overviewStage.style.setProperty("--overview-columns", view.columns);
     overviewStage.style.setProperty("--overview-rows", view.rows);
     overviewStage.style.setProperty("--overview-caption", `${(view.tile_height - view.tile_width) / view.tile_height * 100}%`);
@@ -449,7 +435,7 @@
   }
   $("#clip-mode-all").addEventListener("click", () => setClipMode("all"));
   $("#clip-mode-single").addEventListener("click", () => setClipMode("single"));
-  compactOverview.addEventListener("change", () => { if (clipMode === "all") loadOverview(); });
+  compact.addEventListener("change", () => { if (clipMode === "all") loadOverview(); });
   function describeOverview(clip) {
     $("#overview-query-label").textContent = `Full query · ${clip.person}`;
     $("#overview-query").textContent = clip.query;
@@ -748,6 +734,8 @@
   });
   function showComparison(item, tab) {
     compareTabs.forEach((t) => t.setAttribute("aria-selected", String(t === tab)));
+    $("#comparison-full").href = item.video;
+    comparison.setAttribute("aria-label", `Method comparison: ${item.query}`);
     comparison.poster = item.poster;
     setSource(comparison, item.video);
   }
@@ -757,6 +745,7 @@
   // A step dims the figure except its panels (data-box: left, top, width and height in % of the figure,
   // one box per panel). Hovering previews a step; clicking pins it, and clicking it again clears it.
   $("#pipeline").src = D.pipeline;
+  $("#pipeline-full").href = D.pipeline;
   const steps = [...document.querySelectorAll(".step")];
   const spotlightBox = $("#spotlight");
   let pinned = null;
@@ -779,8 +768,11 @@
       ...boxes.map((box) => rect(box, { class: "ring", "vector-effect": "non-scaling-stroke" }))));
   }
   for (const step of steps) {
+    step.setAttribute("aria-pressed", "false");
     step.addEventListener("pointerenter", () => spotlight(step));
     step.addEventListener("pointerleave", () => spotlight(pinned));
+    step.addEventListener("focus", () => spotlight(step));
+    step.addEventListener("blur", () => spotlight(pinned));
     step.addEventListener("click", () => {
       pinned = pinned === step ? null : step;
       spotlight(pinned);

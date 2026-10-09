@@ -28,7 +28,7 @@ body.viewer-expanded-open { overflow: hidden; }
 .viewer-expanded .subjects { display: flex; justify-content: center; overflow-x: auto; }
 .viewer-expanded .subject { flex: 0 0 60px; }
 
-@media (min-width: 861px) and (min-height: 620px) {
+@media (min-width: 861px) and (min-height: 620px) and (pointer: fine) {
   .viewer-expanded .viewer { flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .viewer-expanded .viewer-body { flex: 1; min-height: 0; }
   .viewer-expanded .viewer-stage { display: flex; flex-direction: column; min-height: 0; }
@@ -38,7 +38,8 @@ body.viewer-expanded-open { overflow: hidden; }
   .viewer-expanded .subject-picker > p { text-align: center; margin-bottom: 5px; }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 860px), (pointer: coarse) {
+  .share-panel input { font-size: 16px; }
   .viewer-expanded { padding: 12px; }
   .viewer-expanded .viewer-viewport { height: clamp(280px, 48svh, 440px); }
   .viewer-expanded .subjects { justify-content: flex-start; }
