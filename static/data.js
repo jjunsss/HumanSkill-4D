@@ -1,7 +1,7 @@
 window.HS4D = {
  "hero": {
-  "full": "media/teaser.mp4?v=f84cf4855386",
-  "poster": "media/teaser.jpg?v=f84cf4855386",
+  "full": "media/teaser.mp4?v=7d008d7daa24",
+  "poster": "media/teaser.jpg?v=7d008d7daa24",
   "full_seconds": 39.86666666666667
  },
  "viewer3d": [
@@ -1688,88 +1688,6 @@ window.HS4D = {
    "thumb": "media/thumb_benchmark_F01.jpg?v=f84cf4855386"
   },
   {
-   "id": "crossbalance_F14",
-   "query": "Highlight the left hand when it is near the right knee and the right knee is higher than the left knee.",
-   "dataset": "HuMMan",
-   "person": "HuMMan p000530",
-   "clip": "F14",
-   "first": 0,
-   "end": 115,
-   "fps": 30.0,
-   "intervals": [
-    [
-     55,
-     83
-    ]
-   ],
-   "camera": "009",
-   "categories": [
-    "left hand"
-   ],
-   "views": [
-    {
-     "camera": "009",
-     "label": "Camera",
-     "video": "media/clip_crossbalance_F14_c009.mp4?v=f84cf4855386",
-     "poster": "media/clip_crossbalance_F14_c009.jpg?v=f84cf4855386"
-    },
-    {
-     "camera": "009_orbit",
-     "label": "Orbit",
-     "video": "media/clip_crossbalance_F14_c009_orbit.mp4?v=f84cf4855386",
-     "poster": "media/clip_crossbalance_F14_c009_orbit.jpg?v=f84cf4855386"
-    },
-    {
-     "camera": "009_above",
-     "label": "Above",
-     "video": "media/clip_crossbalance_F14_c009_above.mp4?v=f84cf4855386",
-     "poster": "media/clip_crossbalance_F14_c009_above.jpg?v=f84cf4855386"
-    }
-   ],
-   "thumb": "media/thumb_crossbalance_F14.jpg?v=f84cf4855386"
-  },
-  {
-   "id": "headmotion_F07",
-   "query": "Highlight the hair while the head tilts backward.",
-   "dataset": "HuMMan",
-   "person": "HuMMan p000571",
-   "clip": "F07",
-   "first": 0,
-   "end": 163,
-   "fps": 30.0,
-   "intervals": [
-    [
-     51,
-     107
-    ]
-   ],
-   "camera": "003",
-   "categories": [
-    "hair"
-   ],
-   "views": [
-    {
-     "camera": "003",
-     "label": "Camera",
-     "video": "media/clip_headmotion_F07_c003.mp4?v=f84cf4855386",
-     "poster": "media/clip_headmotion_F07_c003.jpg?v=f84cf4855386"
-    },
-    {
-     "camera": "003_orbit",
-     "label": "Orbit",
-     "video": "media/clip_headmotion_F07_c003_orbit.mp4?v=f84cf4855386",
-     "poster": "media/clip_headmotion_F07_c003_orbit.jpg?v=f84cf4855386"
-    },
-    {
-     "camera": "003_above",
-     "label": "Above",
-     "video": "media/clip_headmotion_F07_c003_above.mp4?v=f84cf4855386",
-     "poster": "media/clip_headmotion_F07_c003_above.jpg?v=f84cf4855386"
-    }
-   ],
-   "thumb": "media/thumb_headmotion_F07.jpg?v=f84cf4855386"
-  },
-  {
    "id": "asymmetricpose_Z18",
    "query": "Highlight the striped shirt while the right elbow is bent and the left elbow is straight.",
    "dataset": "ZJU-MoCap",
@@ -1813,6 +1731,183 @@ window.HS4D = {
     }
    ],
    "thumb": "media/thumb_asymmetricpose_Z18.jpg?v=f84cf4855386"
+  },
+  {
+   "id": "crossbalance_F14",
+   "query": "Highlight the left hand when it is near the right knee and the right knee is higher than the left knee.",
+   "dataset": "HuMMan",
+   "person": "HuMMan p000530",
+   "clip": "F14",
+   "first": 0,
+   "end": 115,
+   "fps": 30.0,
+   "intervals": [
+    [
+     55,
+     83
+    ]
+   ],
+   "camera": "009",
+   "categories": [
+    "left hand"
+   ],
+   "views": [
+    {
+     "camera": "009",
+     "label": "Camera",
+     "video": "media/clip_crossbalance_F14_c009.mp4?v=f84cf4855386",
+     "poster": "media/clip_crossbalance_F14_c009.jpg?v=f84cf4855386"
+    },
+    {
+     "camera": "009_orbit",
+     "label": "Orbit",
+     "video": "media/clip_crossbalance_F14_c009_orbit.mp4?v=f84cf4855386",
+     "poster": "media/clip_crossbalance_F14_c009_orbit.jpg?v=f84cf4855386"
+    },
+    {
+     "camera": "009_above",
+     "label": "Above",
+     "video": "media/clip_crossbalance_F14_c009_above.mp4?v=f84cf4855386",
+     "poster": "media/clip_crossbalance_F14_c009_above.jpg?v=f84cf4855386"
+    }
+   ],
+   "thumb": "media/thumb_crossbalance_F14.jpg?v=f84cf4855386"
+  },
+  {
+   "id": "highfoot_Z19",
+   "query": "Highlight the right shoe whenever the right foot is higher than the left knee.",
+   "dataset": "ZJU-MoCap",
+   "person": "ZJU-MoCap 394",
+   "clip": "Z19",
+   "first": 391,
+   "end": 859,
+   "fps": 25.0,
+   "intervals": [
+    [
+     555,
+     568
+    ],
+    [
+     665,
+     679
+    ]
+   ],
+   "camera": "8",
+   "categories": [
+    "right shoe"
+   ],
+   "views": [
+    {
+     "camera": "8",
+     "label": "Camera",
+     "video": "media/clip_highfoot_Z19_c8.mp4?v=f84cf4855386",
+     "poster": "media/clip_highfoot_Z19_c8.jpg?v=f84cf4855386"
+    },
+    {
+     "camera": "8_orbit",
+     "label": "Orbit",
+     "video": "media/clip_highfoot_Z19_c8_orbit.mp4?v=f84cf4855386",
+     "poster": "media/clip_highfoot_Z19_c8_orbit.jpg?v=f84cf4855386"
+    },
+    {
+     "camera": "8_above",
+     "label": "Above",
+     "video": "media/clip_highfoot_Z19_c8_above.mp4?v=f84cf4855386",
+     "poster": "media/clip_highfoot_Z19_c8_above.jpg?v=f84cf4855386"
+    }
+   ],
+   "thumb": "media/thumb_highfoot_Z19.jpg?v=f84cf4855386"
+  },
+  {
+   "id": "headmotion_F07",
+   "query": "Highlight the hair while the head tilts backward.",
+   "dataset": "HuMMan",
+   "person": "HuMMan p000571",
+   "clip": "F07",
+   "first": 0,
+   "end": 163,
+   "fps": 30.0,
+   "intervals": [
+    [
+     51,
+     107
+    ]
+   ],
+   "camera": "003",
+   "categories": [
+    "hair"
+   ],
+   "views": [
+    {
+     "camera": "003",
+     "label": "Camera",
+     "video": "media/clip_headmotion_F07_c003.mp4?v=f84cf4855386",
+     "poster": "media/clip_headmotion_F07_c003.jpg?v=f84cf4855386"
+    },
+    {
+     "camera": "003_orbit",
+     "label": "Orbit",
+     "video": "media/clip_headmotion_F07_c003_orbit.mp4?v=f84cf4855386",
+     "poster": "media/clip_headmotion_F07_c003_orbit.jpg?v=f84cf4855386"
+    },
+    {
+     "camera": "003_above",
+     "label": "Above",
+     "video": "media/clip_headmotion_F07_c003_above.mp4?v=f84cf4855386",
+     "poster": "media/clip_headmotion_F07_c003_above.jpg?v=f84cf4855386"
+    }
+   ],
+   "thumb": "media/thumb_headmotion_F07.jpg?v=f84cf4855386"
+  },
+  {
+   "id": "grounded_Z17",
+   "query": "Highlight both shoes while both feet are on the floor.",
+   "dataset": "ZJU-MoCap",
+   "person": "ZJU-MoCap 393",
+   "clip": "Z17",
+   "first": 329,
+   "end": 658,
+   "fps": 25.0,
+   "intervals": [
+    [
+     348,
+     368
+    ],
+    [
+     406,
+     427
+    ],
+    [
+     465,
+     657
+    ]
+   ],
+   "camera": "8",
+   "categories": [
+    "left shoe",
+    "right shoe"
+   ],
+   "views": [
+    {
+     "camera": "8",
+     "label": "Camera",
+     "video": "media/clip_grounded_Z17_c8.mp4?v=f84cf4855386",
+     "poster": "media/clip_grounded_Z17_c8.jpg?v=f84cf4855386"
+    },
+    {
+     "camera": "8_orbit",
+     "label": "Orbit",
+     "video": "media/clip_grounded_Z17_c8_orbit.mp4?v=f84cf4855386",
+     "poster": "media/clip_grounded_Z17_c8_orbit.jpg?v=f84cf4855386"
+    },
+    {
+     "camera": "8_above",
+     "label": "Above",
+     "video": "media/clip_grounded_Z17_c8_above.mp4?v=f84cf4855386",
+     "poster": "media/clip_grounded_Z17_c8_above.jpg?v=f84cf4855386"
+    }
+   ],
+   "thumb": "media/thumb_grounded_Z17.jpg?v=f84cf4855386"
   },
   {
    "id": "crouch_F20",
@@ -1940,101 +2035,6 @@ window.HS4D = {
     }
    ],
    "thumb": "media/thumb_reachoutfit_Z13.jpg?v=f84cf4855386"
-  },
-  {
-   "id": "grounded_Z17",
-   "query": "Highlight both shoes while both feet are on the floor.",
-   "dataset": "ZJU-MoCap",
-   "person": "ZJU-MoCap 393",
-   "clip": "Z17",
-   "first": 329,
-   "end": 658,
-   "fps": 25.0,
-   "intervals": [
-    [
-     348,
-     368
-    ],
-    [
-     406,
-     427
-    ],
-    [
-     465,
-     657
-    ]
-   ],
-   "camera": "8",
-   "categories": [
-    "left shoe",
-    "right shoe"
-   ],
-   "views": [
-    {
-     "camera": "8",
-     "label": "Camera",
-     "video": "media/clip_grounded_Z17_c8.mp4?v=f84cf4855386",
-     "poster": "media/clip_grounded_Z17_c8.jpg?v=f84cf4855386"
-    },
-    {
-     "camera": "8_orbit",
-     "label": "Orbit",
-     "video": "media/clip_grounded_Z17_c8_orbit.mp4?v=f84cf4855386",
-     "poster": "media/clip_grounded_Z17_c8_orbit.jpg?v=f84cf4855386"
-    },
-    {
-     "camera": "8_above",
-     "label": "Above",
-     "video": "media/clip_grounded_Z17_c8_above.mp4?v=f84cf4855386",
-     "poster": "media/clip_grounded_Z17_c8_above.jpg?v=f84cf4855386"
-    }
-   ],
-   "thumb": "media/thumb_grounded_Z17.jpg?v=f84cf4855386"
-  },
-  {
-   "id": "highfoot_Z19",
-   "query": "Highlight the right shoe whenever the right foot is higher than the left knee.",
-   "dataset": "ZJU-MoCap",
-   "person": "ZJU-MoCap 394",
-   "clip": "Z19",
-   "first": 391,
-   "end": 859,
-   "fps": 25.0,
-   "intervals": [
-    [
-     555,
-     568
-    ],
-    [
-     665,
-     679
-    ]
-   ],
-   "camera": "8",
-   "categories": [
-    "right shoe"
-   ],
-   "views": [
-    {
-     "camera": "8",
-     "label": "Camera",
-     "video": "media/clip_highfoot_Z19_c8.mp4?v=f84cf4855386",
-     "poster": "media/clip_highfoot_Z19_c8.jpg?v=f84cf4855386"
-    },
-    {
-     "camera": "8_orbit",
-     "label": "Orbit",
-     "video": "media/clip_highfoot_Z19_c8_orbit.mp4?v=f84cf4855386",
-     "poster": "media/clip_highfoot_Z19_c8_orbit.jpg?v=f84cf4855386"
-    },
-    {
-     "camera": "8_above",
-     "label": "Above",
-     "video": "media/clip_highfoot_Z19_c8_above.mp4?v=f84cf4855386",
-     "poster": "media/clip_highfoot_Z19_c8_above.jpg?v=f84cf4855386"
-    }
-   ],
-   "thumb": "media/thumb_highfoot_Z19.jpg?v=f84cf4855386"
   },
   {
    "id": "benchmark_Z17",
