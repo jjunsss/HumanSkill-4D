@@ -734,11 +734,13 @@
 
   /* ------------------------------------------------------------ how it works */
   // A step dims the figure except its panels (data-box: left, top, width and height in % of the figure,
-  // one box per panel). Selection changes only on activation; the overview button restores the full figure.
+  // one box per panel) and repeats its text under the figure. Selection changes only on activation; the
+  // overview button restores the full figure.
   $("#pipeline").src = D.pipeline;
   $("#pipeline-full").href = D.pipeline;
   const steps = [...document.querySelectorAll(".step")];
   const spotlightBox = $("#spotlight");
+  const stepCaption = $("#step-caption");
   const methodOverview = $("#method-overview");
   function svg(tag, attrs, ...children) {
     const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
@@ -749,8 +751,14 @@
   function spotlight(step) {
     steps.forEach((s) => s.setAttribute("aria-pressed", String(s === step)));
     methodOverview.disabled = !step;
-    spotlightBox.hidden = !step;
-    if (!step) return spotlightBox.replaceChildren();
+    spotlightBox.hidden = stepCaption.hidden = !step;
+    if (!step) {
+      stepCaption.replaceChildren();
+      return spotlightBox.replaceChildren();
+    }
+    const words = [...step.childNodes].filter((node) => node.nodeType === Node.TEXT_NODE).map((node) => node.textContent);
+    stepCaption.replaceChildren(el("span", { class: "step-number", text: String(steps.indexOf(step) + 1) }),
+      el("span", {}, el("b", { text: step.querySelector("b").textContent }), " ", words.join("").trim()));
     const boxes = step.dataset.box.split(" ").map((box) => box.split(",").map(Number));
     const rect = ([x, y, width, height], attrs) => svg("rect", { x, y, width, height, rx: 0.6, ...attrs });
     spotlightBox.replaceChildren(svg("svg", { viewBox: "0 0 100 100", preserveAspectRatio: "none", "aria-hidden": "true" },

@@ -209,6 +209,11 @@ q { quotes: "\201c" "\201d"; }
 .walk { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); align-items: start; gap: 24px; }
 .method-visual { position: sticky; top: 16px; min-width: 0; background: var(--page-bg); }
 .figure-card { position: relative; width: 100%; padding: 10px; border-radius: 10px; background: var(--card); }
+/* The selected step under the figure, so its highlight and its text are read together. */
+.step-caption { display: flex; align-items: flex-start; gap: 10px; margin: 12px 4px 0; font-size: 15px; line-height: 1.5; color: var(--text); }
+.step-caption[hidden] { display: none; }
+.step-caption b { margin-right: 4px; color: var(--select-text); }
+.step-number { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--select); color: #fff; font: 700 13px/1 "Google Sans", "Noto Sans", sans-serif; }
 .method-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 16px; margin-top: 8px; }
 .method-tools a { display: inline-flex; align-items: center; min-height: 40px; font-size: 13px; }
 .method-tools .small { min-height: 40px; }
@@ -388,6 +393,7 @@ q { quotes: "\201c" "\201d"; }
   .walk { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   /* Keep the diagram and its controls together, leaving at least half the screen for the steps. */
   .method-visual { top: 8px; z-index: 2; padding-bottom: 8px; }
+  .step-caption { display: none; } /* the selected card already sits right under the pinned figure */
   .figure-card { width: min(100%, calc((50svh - 72px) * 1.77 + 12px)); margin: 0 auto; padding: 6px; }
   .method-tools .small { min-height: 44px; }
   .spotlight { inset: 6px; }
