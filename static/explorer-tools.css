@@ -1,0 +1,114 @@
+#viewer-expand {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  font-size: var(--text-label);
+}
+
+.viewer-toolbar > div {
+  flex-wrap: wrap;
+}
+
+/* Expanded view */
+body.viewer-expanded-open {
+  overflow: hidden;
+}
+.viewer-expanded {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 16px 24px 24px;
+  border: 0;
+  background: var(--page-bg, #fff);
+  color: var(--text);
+  overflow-y: auto;
+}
+.viewer-expanded::backdrop {
+  background: var(--page-bg, #fff);
+}
+.viewer-expanded[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.expanded-heading {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 4px 0;
+  background: var(--page-bg, #fff);
+}
+.expanded-heading p {
+  margin: 0;
+  font-size: var(--text-meta);
+  color: var(--muted);
+}
+.expanded-heading .small {
+  font-size: var(--text-meta);
+}
+.viewer-expanded .viewer {
+  flex-shrink: 0;
+}
+.viewer-expanded #viewer-expand {
+  display: none;
+}
+.viewer-expanded .subjects {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+}
+.viewer-expanded .subject {
+  flex: 0 0 60px;
+}
+
+@media (min-width: 861px) and (min-height: 620px) and (pointer: fine) {
+  .viewer-expanded .viewer {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .viewer-expanded .viewer-body {
+    flex: 1;
+    min-height: 0;
+  }
+  .viewer-expanded .viewer-stage {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .viewer-expanded .viewer-viewport {
+    flex: 1;
+    min-height: 180px;
+    height: auto;
+  }
+  .viewer-expanded .viewer-side {
+    max-height: none;
+  }
+  .viewer-expanded .subject-picker {
+    flex-shrink: 0;
+    padding: 8px 18px 10px;
+  }
+  .viewer-expanded .subject-picker > p {
+    text-align: center;
+    margin-bottom: 5px;
+  }
+}
+
+@media (max-width: 860px), (pointer: coarse) {
+  .viewer-expanded {
+    padding: 12px;
+  }
+  .viewer-expanded .viewer-viewport {
+    height: clamp(280px, 48svh, 440px);
+  }
+  .viewer-expanded .subjects {
+    justify-content: flex-start;
+  }
+}
