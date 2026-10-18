@@ -800,7 +800,7 @@ q {
     background-color 0.2s ease,
     color 0.2s ease;
 }
-a.author {
+.author a {
   color: inherit;
   text-underline-offset: 3px;
 }
