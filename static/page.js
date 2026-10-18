@@ -287,7 +287,7 @@
 
   /* 3D explorer */
   const explorer = makeStage($("#viewer-canvas"));
-  const ex = { index: 2, prompt: null, promptId: "sunscreen", original: false };
+  const ex = { index: 2, promptId: "sunscreen" };
   const promptButtons = [],
     subjectButtons = [];
   $("#subject-label").append(
@@ -300,8 +300,7 @@
   function revealResult(target, force = false) {
     if (!force && !compact.matches) return;
     const box = target.getBoundingClientRect();
-    const inset = target.closest("#viewer-expanded") ? 64 : 8;
-    if (box.top < inset || box.bottom > innerHeight - 8) {
+    if (box.top < 8 || box.bottom > innerHeight - 8) {
       target.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
     }
   }
@@ -378,9 +377,8 @@
   }
 
   function choose(prompt, requestedId = prompt?.id) {
-    ex.prompt = prompt;
     ex.promptId = requestedId;
-    setOriginal(false);
+    if (explorer.viewer) explorer.show(prompt);
     for (const button of promptButtons) {
       button.setAttribute("aria-pressed", String(button.prompt === prompt));
     }
@@ -392,14 +390,6 @@
         ? [el("span", { class: "swatch" }), el("q", { text: prompt.query })]
         : ["Saved answer unavailable for this avatar. Choose another query."]),
     );
-    $("#viewer-original").disabled = !prompt;
-  }
-
-  function setOriginal(on) {
-    ex.original = on;
-    $("#viewer-original").setAttribute("aria-pressed", String(on));
-    $("#viewer-original").textContent = on ? "Show the answer" : "Show original";
-    if (explorer.viewer) explorer.show(on ? null : ex.prompt);
   }
 
   async function showAvatar(index, selection = null) {
@@ -421,8 +411,7 @@
     );
     selectionCue.textContent = `Loading ${item.title}…`;
     $("#viewer").setAttribute("aria-busy", "true");
-    for (const button of [...promptButtons, $("#viewer-original"), $("#viewer-reset")])
-      button.disabled = true;
+    for (const button of promptButtons) button.disabled = true;
     try {
       if (!(await explorer.load(item))) return;
     } catch (error) {
@@ -434,46 +423,21 @@
     }
     $("#viewer-status").hidden = true;
     $("#viewer").setAttribute("aria-busy", "false");
-    for (const id of ["#viewer-original", "#viewer-reset"]) $(id).disabled = false;
     listPrompts(item);
     choose(item.prompts.find((p) => p.id === keep) || null, keep);
   }
 
-  $("#viewer-original").addEventListener("click", () => setOriginal(!ex.original));
-  $("#viewer-reset").addEventListener("click", () => explorer.viewer && explorer.viewer.goHome());
-
   showAvatar(ex.index);
-
-  /* Move the canvas into a modal dialog, keeping its view and selection. */
-  const expanded = $("#viewer-expanded"),
-    viewerElement = $("#viewer"),
-    expandButton = $("#viewer-expand");
-  let returnScroll = null;
-  expandButton.hidden = typeof expanded.showModal !== "function";
-  expandButton.addEventListener("click", () => {
-    pauseVideos();
-    returnScroll = { left: window.scrollX, top: window.scrollY, behavior: "instant" };
-    document.body.classList.add("viewer-expanded-open");
-    expanded.append(viewerElement);
-    expanded.showModal();
-  });
-  expanded.addEventListener("close", () => {
-    expanded.before(viewerElement);
-    document.body.classList.remove("viewer-expanded-open");
-    expandButton.focus({ preventScroll: true });
-    window.scrollTo(returnScroll);
-  });
 
   /* 4D explorer */
   const clipVideo = $("#clip");
   const timeline = $("#timeline");
   const playhead = $("#playhead");
   const playButton = $("#clip-play");
-  const compareButton = $("#clip-compare");
   const clipStage = $("#clip-viewer .viewer-stage");
   const clipSelectionCue = el("p", { class: "viewer-selection", "aria-hidden": "true" });
   $("#clip-viewer .viewer-head").after(clipSelectionCue);
-  const clipState = { clip: null, compareOriginal: false, seekTime: 0 };
+  const clipState = { clip: null, seekTime: 0 };
   const overviewVideo = $("#overview-video"),
     overviewStage = $("#overview-stage");
   const overviewPlay = $("#overview-play");
@@ -581,17 +545,6 @@
     else if (!document.hidden) overviewVideo.play().catch(noteBlocked);
   });
   loadOverview();
-  function updateComparison() {
-    for (const id of ["#clip-stage", "#clip-labels"])
-      $(id).classList.toggle("answer-view", !clipState.compareOriginal);
-    compareButton.setAttribute("aria-pressed", String(clipState.compareOriginal));
-    compareButton.textContent = clipState.compareOriginal ? "Focus on answer" : "Compare original";
-  }
-  compareButton.addEventListener("click", () => {
-    clipState.compareOriginal = !clipState.compareOriginal;
-    updateComparison();
-  });
-  updateComparison();
   playWhileVisible($("#clip-stage"), clipVideo);
 
   // The first saved answer is shown first.

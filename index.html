@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/page.css?v=20261018-compact-queries">
+  <link rel="stylesheet" href="static/page.css?v=20261019-gallery-controls">
 </head>
 <body>
 
@@ -108,21 +108,15 @@
       <div class="viewer-stage">
         <div class="viewer-head">
           <h3 id="viewer-title">ZJU-MoCap 377</h3>
-          <button type="button" class="small" id="viewer-expand" aria-haspopup="dialog">Expand</button>
         </div>
         <div class="viewer-viewport" id="viewer-viewport">
-          <canvas id="viewer-canvas" tabindex="0" aria-label="3D avatar. Drag sideways or use arrow keys to turn; use plus and minus to zoom. On mobile, swipe vertically to scroll the page; Expand enables full drag and pinch controls. Home resets the view."></canvas>
+          <canvas id="viewer-canvas" tabindex="0" aria-label="3D avatar. Drag or use arrow keys to rotate; scroll or use plus and minus to zoom. Double-click or press Home to reset. On mobile, swipe sideways to rotate and vertically to scroll the page."></canvas>
           <div class="viewer-status" id="viewer-status" role="status">Loading avatar…</div>
         </div>
-        <div class="viewer-toolbar">
-          <span class="gesture-desktop">Drag to turn · Scroll or pinch to zoom</span>
-          <span class="gesture-mobile">Swipe sideways to turn · Swipe up to scroll<br>Expand for full rotation and pinch zoom</span>
-          <span class="gesture-expanded">Drag to turn · Pinch to zoom</span>
-          <div>
-            <button type="button" class="small" id="viewer-original" aria-pressed="false" disabled>Show original</button>
-            <button type="button" class="small" id="viewer-reset" disabled>Reset view</button>
-          </div>
-        </div>
+        <p class="viewer-hint">
+          <span class="gesture-desktop">Drag to rotate · Scroll to zoom</span>
+          <span class="gesture-mobile">Swipe sideways to rotate</span>
+        </p>
       </div>
       <div class="viewer-side">
         <h3>Example queries</h3>
@@ -136,12 +130,6 @@
       <div class="subjects" id="viewer-subjects" role="group" aria-labelledby="subject-label"></div>
     </div>
   </div>
-  <dialog class="viewer-expanded" id="viewer-expanded" aria-label="Expanded 3D explorer">
-    <div class="expanded-heading">
-      <p>Explore in 3D</p>
-      <form method="dialog"><button type="submit" class="small" autofocus>Close expanded view</button></form>
-    </div>
-  </dialog>
 </section>
 
 <hr class="section-rule">
@@ -172,7 +160,6 @@
           <h3 id="clip-title"></h3>
           <button type="button" class="small" id="clip-back">All people</button>
         </div>
-        <p class="clip-labels" id="clip-labels"><span>Original</span><span>HumanSkill-4D</span></p>
         <div class="clip-stage" id="clip-stage">
           <video id="clip" muted loop playsinline preload="none"></video>
         </div>
@@ -183,7 +170,6 @@
           <div class="clip-controls">
             <button type="button" id="clip-play" class="small">Play</button>
             <span class="clip-views" id="clip-views" role="group" aria-label="Camera view"></span>
-            <button type="button" id="clip-compare" class="small" aria-pressed="false">Compare original</button>
           </div>
         </div>
       </div>
@@ -214,6 +200,6 @@
 
 <script src="static/data.js?v=20261014-viewer-loading"></script>
 <script src="static/viewer.js?v=20261017-tidy"></script>
-<script src="static/page.js?v=20261018-typography"></script>
+<script src="static/page.js?v=20261019-gallery-controls"></script>
 </body>
 </html>
