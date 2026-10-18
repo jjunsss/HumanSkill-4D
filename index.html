@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/page.css?v=20261019-gallery-controls">
+  <link rel="stylesheet" href="static/page.css?v=20261019-neutral-controls">
 </head>
 <body>
 
@@ -136,9 +136,9 @@
 <section class="section explorer" id="when" aria-label="Interactive 4D referring segmentation">
   <p class="kicker">Gallery · <span class="kicker-when">Where &times; when</span></p>
   <h2 class="section-title">4D Referring Segmentation</h2>
-  <div class="gallery-modes" role="group" aria-label="4D gallery display">
-    <button type="button" class="small" id="clip-mode-all" aria-pressed="true" aria-controls="clip-overview">All people</button>
-    <button type="button" class="small" id="clip-mode-single" aria-pressed="false" aria-controls="clip-viewer">One at a time</button>
+  <div class="segmented gallery-modes" role="group" aria-label="4D gallery display">
+    <button type="button" id="clip-mode-all" aria-pressed="true" aria-controls="clip-overview">All people</button>
+    <button type="button" id="clip-mode-single" aria-pressed="false" aria-controls="clip-viewer">One at a time</button>
   </div>
   <div class="viewer" id="clip-overview">
     <div class="overview-heading">
@@ -149,7 +149,10 @@
       <div class="overview-people" id="overview-people" role="group" aria-label="Choose a person to explore"></div>
     </div>
     <div class="overview-toolbar">
-      <button type="button" class="small" id="overview-play">Play all</button>
+      <button type="button" class="quiet playback" id="overview-play">
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><path class="play-icon" d="M4 2.5 13 8l-9 5.5z"/><path class="pause-icon" d="M4 3h3v10H4zM9 3h3v10H9z"/></svg>
+        <span class="play-label">Play all</span>
+      </button>
       <div class="overview-query" aria-live="polite"><span id="overview-query-label"></span><p id="overview-query"></p></div>
     </div>
   </div>
@@ -158,7 +161,7 @@
       <div class="viewer-stage">
         <div class="viewer-head">
           <h3 id="clip-title"></h3>
-          <button type="button" class="small" id="clip-back">All people</button>
+          <button type="button" class="quiet" id="clip-back" aria-label="Back to all people"><span aria-hidden="true">&larr;</span>All people</button>
         </div>
         <div class="clip-stage" id="clip-stage">
           <video id="clip" muted loop playsinline preload="none"></video>
@@ -168,8 +171,11 @@
             <div class="track"></div><div class="playhead" id="playhead"></div>
           </div>
           <div class="clip-controls">
-            <button type="button" id="clip-play" class="small">Play</button>
-            <span class="clip-views" id="clip-views" role="group" aria-label="Camera view"></span>
+            <button type="button" class="quiet playback" id="clip-play">
+              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><path class="play-icon" d="M4 2.5 13 8l-9 5.5z"/><path class="pause-icon" d="M4 3h3v10H4zM9 3h3v10H9z"/></svg>
+              <span class="play-label">Play</span>
+            </button>
+            <span class="segmented clip-views" id="clip-views" role="group" aria-label="Camera view"></span>
           </div>
         </div>
       </div>
@@ -200,6 +206,6 @@
 
 <script src="static/data.js?v=20261014-viewer-loading"></script>
 <script src="static/viewer.js?v=20261017-tidy"></script>
-<script src="static/page.js?v=20261019-gallery-controls"></script>
+<script src="static/page.js?v=20261019-neutral-controls"></script>
 </body>
 </html>

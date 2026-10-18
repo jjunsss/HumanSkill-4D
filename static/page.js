@@ -535,8 +535,12 @@
       ?.focus({ preventScroll: true });
     revealResult($("#clip-overview"), true);
   });
+  function setPlaybackState(button, paused, suffix = "") {
+    button.classList.toggle("is-playing", !paused);
+    button.querySelector(".play-label").textContent = `${paused ? "Play" : "Pause"}${suffix}`;
+  }
   function updateOverviewPlay() {
-    overviewPlay.textContent = overviewVideo.paused ? "Play all" : "Pause all";
+    setPlaybackState(overviewPlay, overviewVideo.paused, " all");
   }
   for (const type of ["play", "pause"]) overviewVideo.addEventListener(type, updateOverviewPlay);
   overviewPlay.addEventListener("click", () => {
@@ -606,7 +610,6 @@
     viewButtons = clip.views.map((view, index) => {
       const button = el("button", {
         type: "button",
-        class: "small",
         "aria-pressed": "false",
         text: view.label,
       });
@@ -681,7 +684,7 @@
   }
 
   function updatePlayState() {
-    playButton.textContent = clipVideo.paused || clipVideo.userPaused ? "Play" : "Pause";
+    setPlaybackState(playButton, clipVideo.paused || clipVideo.userPaused);
   }
   for (const type of ["play", "pause"]) clipVideo.addEventListener(type, updatePlayState);
 

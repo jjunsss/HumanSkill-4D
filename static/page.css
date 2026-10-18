@@ -312,19 +312,9 @@ q {
 
 /* 4D overview */
 .gallery-modes {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  margin: 0 0 18px;
-}
-.gallery-modes .small {
-  min-height: 42px;
-  padding: 7px 20px;
-}
-.gallery-modes .small[aria-pressed="true"] {
-  background: var(--select);
-  border-color: var(--select);
-  color: #fff;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 16px;
 }
 .overview-heading {
   padding: 16px 20px;
@@ -420,9 +410,8 @@ q {
   padding: 12px 16px;
   border-top: 1px solid var(--line);
 }
-.overview-toolbar .small {
-  flex: none;
-  min-height: 40px;
+.overview-toolbar .playback {
+  flex-shrink: 0;
 }
 .overview-toolbar p {
   margin: 0;
@@ -524,29 +513,76 @@ q {
   border-color: var(--line-strong);
   background: var(--panel-2);
 }
-.small[aria-pressed="true"] {
-  border-color: var(--strong);
+/* Related views share one neutral control; secondary actions stay quiet. */
+.segmented {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
 }
-/* View switch */
-.clip-views {
+.segmented button {
+  min-height: 28px;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: var(--leading-ui);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.segmented button:hover {
+  background: var(--panel-2);
+  color: var(--strong);
+}
+.segmented button[aria-pressed="true"] {
+  background: var(--line);
+  color: var(--strong);
+}
+.segmented button[aria-pressed="true"]:hover {
+  background: var(--line-strong);
+}
+.quiet {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: var(--leading-ui);
+  white-space: nowrap;
 }
-.clip-views .small {
-  border-radius: 0;
-  margin-left: -1px;
+.quiet:hover {
+  background: var(--panel-2);
+  color: var(--strong);
 }
-.clip-views .small:first-child {
-  border-radius: 4px 0 0 4px;
-  margin-left: 0;
+.segmented button:focus-visible,
+.quiet:focus-visible {
+  outline-color: var(--strong);
 }
-.clip-views .small:last-child {
-  border-radius: 0 4px 4px 0;
+#clip-back {
+  flex-shrink: 0;
 }
-.clip-views .small[aria-pressed="true"] {
-  position: relative;
-  border-color: var(--select);
-  background: var(--select);
-  color: #fff;
+.playback svg {
+  flex-shrink: 0;
+  fill: currentColor;
+}
+.playback .pause-icon,
+.playback.is-playing .play-icon {
+  display: none;
+}
+.playback.is-playing .pause-icon {
+  display: inline;
 }
 
 /* Comparison */
@@ -1096,15 +1132,15 @@ q {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
   }
-  .clip-controls .small {
-    padding: 3px 9px;
+  .clip-views button {
+    padding-inline: 9px;
   }
   .clip-views {
     justify-self: end;
   }
   .small,
-  .gallery-modes .small,
-  .overview-toolbar .small,
+  .segmented button,
+  .quiet,
   .prompt,
   .affiliation,
   .tabs .chip {
