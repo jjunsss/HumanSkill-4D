@@ -106,23 +106,30 @@ h3 {
   gap: 8px;
   margin-top: 12px;
 }
-.button {
-  padding: 7px 20px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: var(--strong);
-  color: var(--page-bg);
+.paper-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--text);
   font-size: var(--text-ui);
+  font-weight: 500;
+  line-height: var(--leading-ui);
+  transition: background 150ms ease, border-color 150ms ease;
 }
-.button:hover {
-  background: #fff;
-  text-decoration: none;
-}
-.button:disabled {
-  background: var(--panel-2);
+.paper-link svg {
+  flex: none;
   color: var(--muted);
-  border-color: var(--line);
-  opacity: 1;
+}
+.paper-link:hover {
+  border-color: var(--muted);
+  background: var(--panel-2);
+  text-decoration: none;
 }
 
 /* Sections */
